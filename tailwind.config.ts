@@ -3,7 +3,14 @@ import { type Config } from "tailwindcss";
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        textC: "#444746",
+        // bgc: "#F7F9FC",
+        darkC2: "#EDF2FC",
+        darkC: "#E1E5EA",
+      },
+    },
   },
   plugins: [],
 } satisfies Config;

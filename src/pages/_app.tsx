@@ -1,8 +1,9 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-
 import "@/styles/globals.css";
+import Header from "@/components/Header";
+import SideMenu from "@/components/SideMenu";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -10,7 +11,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <main className="flex min-h-screen flex-col items-center justify-between bg-[#F7F9FC]">
+        <Header />
+        <section className="mb-5 flex h-full w-screen flex-1 px-5 pr-16">
+          <SideMenu />
+          <div className="flex flex-1 rounded-2xl bg-white p-5 pb-3">
+            <Component {...pageProps} />
+          </div>
+        </section>
+      </main>
     </SessionProvider>
   );
 };

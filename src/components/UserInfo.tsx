@@ -1,9 +1,7 @@
 import React from "react";
-import {
-  ArrowRightOnRectangleIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { HiOutlinePlus } from "react-icons/hi";
+import { PiSignOutBold } from "react-icons/pi";
+import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 
@@ -14,12 +12,12 @@ type UserInfoProps = {
 function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
   const { data: session } = useSession();
   return (
-    <div className="relative flex flex-col items-center justify-center space-y-3 rounded-2xl bg-[#EDF2FC] px-5 py-3 text-sm font-medium text-[#444746] shadow-md shadow-[#b4bebb]">
+    <div className="bg-darkC2 text-textC relative flex flex-col items-center justify-center space-y-3 rounded-2xl px-5 py-3 text-sm font-medium shadow-md shadow-[#b4bebb]">
       <button
         onClick={() => setDisplayUserInfo((prev: boolean) => false)}
-        className="absolute right-3 top-3 rounded-full bg-[#EDF2FC] p-1 hover:bg-[#E1E5EA]"
+        className="hover:bg-darkC bg-darkC2 absolute right-3 top-3 rounded-full p-1"
       >
-        <XMarkIcon className="h-6 w-6 rounded-full stroke-2 text-[#444746]" />
+        <AiOutlineClose className="text-textC h-5 w-5 rounded-full stroke-2" />
       </button>
       <p>{session?.user.email}</p>
       <div className="h-20 w-20 rounded-full border">
@@ -37,15 +35,15 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
         Manage your Google Account
       </button>
       <div className="flex space-x-1">
-        <button className="flex w-44 items-center space-x-2 rounded-l-full bg-white py-4 pl-3  hover:bg-[#E1E5EA]">
-          <PlusIcon className="h-5 w-5 rounded-full bg-[#EDF2FC] stroke-2 text-[#4285F4]" />
+        <button className="hover:bg-darkC flex w-44 items-center space-x-2 rounded-l-full bg-white py-3  pl-3">
+          <HiOutlinePlus className="bg-darkC2 h-7 w-7 rounded-full p-1 text-[#4285F4]" />
           <span>Add account</span>
         </button>
         <button
           onClick={() => signOut()}
-          className="flex w-44 items-center space-x-2 rounded-r-full bg-white py-4 pl-3  hover:bg-[#E1E5EA]"
+          className="hover:bg-darkC flex w-44 items-center space-x-2 rounded-r-full bg-white py-3  pl-3"
         >
-          <ArrowRightOnRectangleIcon className="h-5 w-5 stroke-2" />
+          <PiSignOutBold className="h-6 w-6" />
           <span>Sign out</span>
         </button>
       </div>
