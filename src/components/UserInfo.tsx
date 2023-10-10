@@ -5,10 +5,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 
-type UserInfoProps = {
-  setDisplayUserInfo: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
   const { data: session } = useSession();
   return (
@@ -31,12 +27,12 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
         />
       </div>
       <h2 className="text-2xl font-normal">Hi, {session?.user.name}!</h2>
-      <button className="rounded-full border border-black px-7 py-2 text-[#4285F4] hover:bg-[#d3dfee]">
+      <button className="text-textC2 rounded-full border border-black px-7 py-2 hover:bg-[#d3dfee]">
         Manage your Google Account
       </button>
       <div className="flex space-x-1">
         <button className="hover:bg-darkC flex w-44 items-center space-x-2 rounded-l-full bg-white py-3  pl-3">
-          <HiOutlinePlus className="bg-darkC2 h-7 w-7 rounded-full p-1 text-[#4285F4]" />
+          <HiOutlinePlus className="bg-darkC2 text-textC2 h-7 w-7 rounded-full p-1" />
           <span>Add account</span>
         </button>
         <button
