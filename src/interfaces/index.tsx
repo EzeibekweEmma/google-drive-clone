@@ -17,6 +17,11 @@ interface AddNewFolderProps {
   setAddNewFolder: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface AddNewFolderAndUpload extends AddNewFolderProps {
+  uploadFile: Function;
+  setIsDropDown: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 interface PopUpProps {
   isOpen: boolean;
   onClose: () => void;

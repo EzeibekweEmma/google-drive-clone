@@ -1,14 +1,14 @@
 import { uploadBytes } from "firebase/storage";
-import React, { ChangeEvent, useState } from "react";
+import React from "react";
 import { MdUploadFile } from "react-icons/md";
-import fileUpload from "@/API/FileUpload";
+// import fileUpload from "@/API/FileUpload";
 
-function UploadFileBtn() {
-  const [file, setFile] = useState({});
-  const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    fileUpload(file);
-  };
+function UploadFileBtn({ uploadFile }: { uploadFile: Function }) {
+  // const [file, setFile] = useState({});
+  // const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   fileUpload(file, setProgress);
+  // };
   return (
     <button className="hover:bg-darkC relative flex w-full items-center space-x-3 px-4 py-1.5">
       <MdUploadFile className="h-5 w-5" />

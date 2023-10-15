@@ -1,9 +1,10 @@
 import { storage } from "@/firebaseConfig";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import addFiles from "@/API/Firestore";
+
 const fileUpload = (
   file: any,
-  // setProgress: Function,
+  setProgress: Function,
   // parentId: string,
   // userEmail: string,
   // ownerEmail: string,
@@ -17,6 +18,7 @@ const fileUpload = (
         (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
       );
       console.log(progress);
+      setProgress(progress);
     },
     (error) => {
       alert(error);
