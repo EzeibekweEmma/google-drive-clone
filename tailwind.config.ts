@@ -7,7 +7,7 @@ export default {
       colors: {
         textC: "#444746",
         textC2: "#4285F4",
-        // bgc: "#F7F9FC",
+        bgc: "#F7F9FC",
         darkC2: "#EDF2FC",
         darkC: "#E1E5EA",
       },

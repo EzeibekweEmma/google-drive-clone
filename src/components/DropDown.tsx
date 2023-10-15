@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  MdDriveFolderUpload,
-  MdOutlineCreateNewFolder,
-  MdUploadFile,
-} from "react-icons/md";
+import { MdDriveFolderUpload, MdOutlineCreateNewFolder } from "react-icons/md";
+import UploadFileBtn from "./UploadFileBtn";
 
 // The DropDown component renders a dropdown menu for creating new folders and uploading files.
 function DropDown({ setAddNewFolder }: AddNewFolderProps) {
@@ -22,13 +19,11 @@ function DropDown({ setAddNewFolder }: AddNewFolderProps) {
       </div>
       {/* File and folder upload section */}
       <div className="border-b py-2">
+        {/* Upload file button */}
+        <UploadFileBtn />
+        {/* Folder upload button */}
         <button className="hover:bg-darkC flex w-full items-center space-x-3 px-4 py-1.5">
-          <MdUploadFile className="h-5 w-5" /> {/* Icon for file upload */}
-          <span>File upload</span>
-        </button>
-        <button className="hover:bg-darkC flex w-full items-center space-x-3 px-4 py-1.5">
-          <MdDriveFolderUpload className="h-5 w-5" />{" "}
-          {/* Icon for folder upload */}
+          <MdDriveFolderUpload className="h-5 w-5" />
           <span>Folder upload</span>
         </button>
       </div>

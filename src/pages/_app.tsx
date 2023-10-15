@@ -11,7 +11,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <main className="flex min-h-screen flex-col items-center justify-between bg-[#F7F9FC]">
+      <main className="bg-bgc flex min-h-screen flex-col items-center justify-between">
         <Header />
         <section className="mb-5 flex h-full w-screen flex-1 px-5 pr-16">
           <SideMenu />

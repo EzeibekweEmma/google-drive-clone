@@ -56,7 +56,7 @@ function Header() {
           alt="avatar"
         />
       </div>
-      <div className="absolute right-5 top-16 z-20">
+      <div className="absolute right-5 top-16">
         {displayUserInfo && (
           <UserInfo setDisplayUserInfo={setDisplayUserInfo} />
         )}

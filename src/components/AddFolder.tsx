@@ -13,7 +13,7 @@ function AddFolder({ setAddNewFolder }: AddNewFolderProps) {
         onClick={(e) => {
           e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
         }}
-        className="bg-darkC2 w-96 space-y-6 rounded-xl p-5 shadow-lg shadow-[#bbb]"
+        className="w-96 space-y-6 rounded-xl bg-white p-5 shadow-lg shadow-[#bbb]"
       >
         <h2 className="text-2xl">New folder</h2>
         <input
