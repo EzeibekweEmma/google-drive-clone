@@ -14,9 +14,9 @@ function DropDown({
       className="absolute -left-5 -top-20 flex h-screen w-screen items-center justify-center"
     >
       <div
-        // onClick={(e) => {
-        //   e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
-        // }}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
+        }}
         className="text-textC absolute left-6 top-[68px] w-72 rounded-md bg-white shadow-md shadow-[#bbb]"
       >
         {/* New folder section */}

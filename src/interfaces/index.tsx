@@ -27,3 +27,8 @@ interface PopUpProps {
   onClose: () => void;
   setAddNewFolder: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+interface ProgressIndicatorProps {
+  progress: number;
+  fileName: string;
+}
