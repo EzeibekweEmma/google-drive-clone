@@ -9,18 +9,20 @@ import ProgressIndicator from "./ProgressIndicator";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
-  const [progress, setProgress] = useState(0); //
-  const [fileName, setFileName] = useState(""); // set it to an array of strings
+  const [uploadStatus, setUploadStatus] = useState([]);
+  const [progress, setProgress] = useState([]);
+  const [fileName, setFileName] = useState<string[]>([]);
   const [addNewFolder, setAddNewFolder] = useState(false);
 
   // Add new file
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setFileName(file.name);
-    console.log(file);
+    setFileName((prev) => [...prev, file.name]);
     fileUpload(file, setProgress);
   };
+  fileName.reverse();
+  progress.reverse();
   return (
     <section className="relative w-60 space-y-4">
       <button
@@ -41,7 +43,11 @@ function SideMenu() {
         />
       )}
       {/* Progress Indicator */}
-      <ProgressIndicator progress={progress} fileName={fileName} />
+      <ProgressIndicator
+        progress={progress}
+        fileName={fileName}
+        setFileName={setFileName}
+      />
       {/* New folder */}
       {addNewFolder && <AddFolder setAddNewFolder={setAddNewFolder} />}
       {/* navbar */}

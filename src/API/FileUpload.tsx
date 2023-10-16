@@ -17,7 +17,7 @@ const fileUpload = (
       const progress = Math.round(
         (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
       );
-      setProgress(progress);
+      setProgress((prev:number[]) => [...prev, progress]);
     },
     (error) => {
       alert(error);

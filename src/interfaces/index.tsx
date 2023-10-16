@@ -29,6 +29,7 @@ interface PopUpProps {
 }
 
 interface ProgressIndicatorProps {
-  progress: number;
-  fileName: string;
+  progress: number[];
+  fileName: string[];
+  setFileName: React.Dispatch<React.SetStateAction<string[]>>;
 }
