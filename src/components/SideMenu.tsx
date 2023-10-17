@@ -27,9 +27,9 @@ function SideMenu() {
     <section className="relative w-60 space-y-4">
       <button
         onClick={() => setIsDropDown(true)}
-        className="hover:bg-darkC2 text-textC mt-1 flex w-fit
-      items-center justify-center space-x-2 rounded-2xl bg-white px-5
-      py-4 shadow-md shadow-[#ddd] duration-300 hover:shadow-[#bbb]"
+        className="mt-1 flex w-fit items-center justify-center
+      space-x-2 rounded-2xl bg-white px-5 py-4 text-textC
+      shadow-md shadow-[#ddd] duration-300 hover:bg-darkC2 hover:shadow-[#bbb]"
       >
         <HiOutlinePlusSm className="h-6 w-6" />
         <span className="text-sm font-medium">New</span>

@@ -11,12 +11,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <main className="bg-bgc flex h-screen flex-col items-center justify-between  overflow-hidden">
+      <main className="flex h-screen flex-col items-center justify-between overflow-hidden bg-bgc">
         <Header />
         <section className="mb-5 flex h-full w-screen flex-1 px-5 pr-16">
-          <SideMenu />
-          <div className="flex flex-1 rounded-2xl bg-white p-5 pb-3">
-            <Component {...pageProps} />
+          <div>
+            <SideMenu />
+          </div>
+          <div className="flex flex-1">
+            <div className="h-[90%] w-full overflow-x-hidden overflow-y-scroll rounded-2xl bg-white p-5">
+              <Component {...pageProps} />
+            </div>
           </div>
         </section>
       </main>

@@ -33,3 +33,10 @@ interface ProgressIndicatorProps {
   fileName: string[];
   setFileName: React.Dispatch<React.SetStateAction<string[]>>;
 }
+
+interface FileListProps {
+  id: string;
+  imageLink: string;
+  fileName: string;
+  fileExtension: string;
+}
