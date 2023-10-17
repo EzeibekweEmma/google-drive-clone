@@ -17,14 +17,15 @@ const fileUpload = (
       const progress = Math.round(
         (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
       );
-      setProgress((prev:number[]) => [...prev, progress]);
+      // TODO: add progress bar
+      setProgress((prev: number[]) => [...prev, progress]);
     },
     (error) => {
       alert(error);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        addFiles(downloadURL);
+        addFiles(downloadURL, file.name);
       });
     },
   );

@@ -36,7 +36,7 @@ interface ProgressIndicatorProps {
 
 interface FileListProps {
   id: string;
-  imageLink: string;
+  fileLink: string;
   fileName: string;
   fileExtension: string;
 }

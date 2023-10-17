@@ -1,5 +1,6 @@
 import { AiFillFile, AiFillFileZip } from "react-icons/ai";
-import { MdMovie, MdPictureAsPdf, MdLibraryMusic } from "react-icons/md";
+import { MdMovie, MdPictureAsPdf } from "react-icons/md";
+import { IoMdHeadset } from "react-icons/io";
 import {
   BiSolidImageAlt,
   BiSolidFileTxt,
@@ -8,7 +9,7 @@ import {
 
 const fileIcons = {
   mp4: <MdMovie className="h-full w-full text-[#CA2E24]" />,
-  mp3: <MdLibraryMusic className="h-full w-full text-[#CA2E24]" />,
+  mp3: <IoMdHeadset className="h-full w-full text-[#CA2E24]" />,
   pdf: <MdPictureAsPdf className="h-full w-full text-[#CA2E24]" />,
   jpg: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   jpeg: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,

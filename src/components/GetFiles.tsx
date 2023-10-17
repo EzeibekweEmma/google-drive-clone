@@ -6,6 +6,9 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 
 function GetFiles() {
   let fileList = fetchFiles();
+  const openFile = (fileLink: string) => {
+    window.open(fileLink, "_blank");
+  };
 
   const list = fileList.map((file) => {
     // getting the icon for the file
@@ -17,19 +20,34 @@ function GetFiles() {
       file.fileExtension,
     ) ? (
       <Image
-        src={file.imageLink}
+        src={file.fileLink}
         alt={file.fileName}
         height="500"
         width="500"
         draggable={false}
         className="h-full w-full rounded-md object-cover object-center"
       />
+    ) : file.fileExtension === "mp3" ? (
+      <div className="flex flex-col items-center justify-center">
+        <div className="h-24 w-24 ">{icon}</div>
+        <audio controls className="w-44">
+          <source src={file.fileLink} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    ) : file.fileExtension === "mp4" ? (
+      <video controls>
+        <source src={file.fileLink} type="audio/mpeg" />
+        <div className="h-36 w-36 ">{icon}</div>
+      </video>
     ) : (
       <div className="h-36 w-36 ">{icon}</div>
     );
-
     return (
-      <div className="">
+      <div
+        onDoubleClick={() => openFile(file.fileLink)}
+        className="hover:cursor-alias"
+      >
         <div className="flex w-full flex-col items-center justify-center overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC">
           <div className="flex w-full items-center justify-between px-1 py-3">
             <div className="flex items-center space-x-4">
