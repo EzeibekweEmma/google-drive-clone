@@ -13,19 +13,22 @@ interface UserInfoProps {
   setDisplayUserInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface AddNewFolderProps {
-  setAddNewFolder: React.Dispatch<React.SetStateAction<boolean>>;
+interface folderToggleProps {
+  setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
+  setFolderName: React.Dispatch<React.SetStateAction<string>>;
+  uploadFolder: Function;
 }
 
-interface AddNewFolderAndUpload extends AddNewFolderProps {
+interface folderToggleAndUpload {
   uploadFile: Function;
+  setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDropDown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface PopUpProps {
   isOpen: boolean;
   onClose: () => void;
-  setAddNewFolder: React.Dispatch<React.SetStateAction<boolean>>;
+  setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface ProgressIndicatorProps {
@@ -35,8 +38,16 @@ interface ProgressIndicatorProps {
 }
 
 interface FileListProps {
+  folderName: string;
+  isFolder: boolean;
   id: string;
   fileLink: string;
   fileName: string;
   fileExtension: string;
+}
+
+interface payloadProps {
+  folderName: string;
+  isFolder: boolean;
+  FileList: object;
 }

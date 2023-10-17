@@ -1,21 +1,23 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import DropDown from "./addBtnComponents/DropDown";
 import AddFolder from "./addBtnComponents/AddFolder";
 import Navbar from "./Navbar";
 import fileUpload from "@/API/FileUpload";
 import ProgressIndicator from "./ProgressIndicator";
+import { addFolder } from "@/API/Firestore";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState([]);
+  // const [uploadStatus, setUploadStatus] = useState([]);
   const [progress, setProgress] = useState([]);
   const [fileName, setFileName] = useState<string[]>([]);
-  const [addNewFolder, setAddNewFolder] = useState(false);
+  const [folderName, setFolderName] = useState<string>("");
+  const [folderToggle, setFolderToggle] = useState(false);
 
   // Add new file
-  const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+  const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setFileName((prev) => [...prev, file.name]);
@@ -23,6 +25,19 @@ function SideMenu() {
   };
   fileName.reverse();
   progress.reverse();
+
+  // Add new folder
+  const uploadFolder = () => {
+    let payload = {
+      folderName: folderName === "" ? "Untitled folder" : folderName,
+      isFolder: true,
+      FileList: [],
+    };
+
+    addFolder(payload);
+    setFolderName("");
+  };
+
   return (
     <section className="relative w-60 space-y-4">
       <button
@@ -37,7 +52,7 @@ function SideMenu() {
       {/* Add new file or folder drop down */}
       {isDropDown && (
         <DropDown
-          setAddNewFolder={setAddNewFolder}
+          setFolderToggle={setFolderToggle}
           uploadFile={uploadFile}
           setIsDropDown={setIsDropDown}
         />
@@ -49,7 +64,13 @@ function SideMenu() {
         setFileName={setFileName}
       />
       {/* New folder */}
-      {addNewFolder && <AddFolder setAddNewFolder={setAddNewFolder} />}
+      {folderToggle && (
+        <AddFolder
+          setFolderToggle={setFolderToggle}
+          setFolderName={setFolderName}
+          uploadFolder={uploadFolder}
+        />
+      )}
       {/* navbar */}
       <Navbar />
     </section>

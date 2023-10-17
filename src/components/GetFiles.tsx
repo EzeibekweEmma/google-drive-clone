@@ -44,25 +44,28 @@ function GetFiles() {
       <div className="h-36 w-36 ">{icon}</div>
     );
     return (
-      <div
-        onDoubleClick={() => openFile(file.fileLink)}
-        className="hover:cursor-alias"
-      >
-        <div className="flex w-full flex-col items-center justify-center overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC">
-          <div className="flex w-full items-center justify-between px-1 py-3">
-            <div className="flex items-center space-x-4">
-              <div className="h-6 w-6">{icon}</div>
-              <span className="w-32 truncate text-sm font-medium text-textC">
-                {file.fileName}
-              </span>
+      !file?.isFolder && (
+        <div
+          key={file.id}
+          onDoubleClick={() => openFile(file.fileLink)}
+          className="hover:cursor-alias"
+        >
+          <div className="flex w-full flex-col items-center justify-center overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC">
+            <div className="flex w-full items-center justify-between px-1 py-3">
+              <div className="flex items-center space-x-4">
+                <div className="h-6 w-6">{icon}</div>
+                <span className="w-32 truncate text-sm font-medium text-textC">
+                  {file.fileName}
+                </span>
+              </div>
+              <BsThreeDotsVertical className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]" />
             </div>
-            <BsThreeDotsVertical className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]" />
-          </div>
-          <div className="flex h-44 w-48 items-center justify-center pb-2.5">
-            {img}
+            <div className="flex h-44 w-48 items-center justify-center pb-2.5">
+              {img}
+            </div>
           </div>
         </div>
-      </div>
+      )
     );
   });
 

@@ -1,15 +1,23 @@
 import React from "react";
 
 // The AddFolder component displays a pop-up for creating a new folder.
-function AddFolder({ setAddNewFolder }: AddNewFolderProps) {
+function AddFolder({
+  setFolderToggle,
+  setFolderName,
+  uploadFolder,
+}: folderToggleProps) {
+  const addFolder = () => {
+    uploadFolder();
+    setFolderToggle(false);
+  };
   return (
     // Background overlay for the pop-up
     <div
-      onClick={() => setAddNewFolder(false)} // Close the pop-up when clicking outside
-      className="bg-darkC2/40 absolute -left-5 -top-20 flex h-screen w-screen items-center justify-center"
+      onClick={() => setFolderToggle(false)} // Close the pop-up when clicking outside
+      className="absolute -left-5 -top-20 flex h-screen w-screen items-center justify-center bg-darkC2/40"
     >
       {/* Pop-up form for creating a new folder */}
-      <form
+      <div
         onClick={(e) => {
           e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
         }}
@@ -17,23 +25,27 @@ function AddFolder({ setAddNewFolder }: AddNewFolderProps) {
       >
         <h2 className="text-2xl">New folder</h2>
         <input
-          className="border-textC outline-textC2 w-full rounded-md border py-2 indent-5"
+          className="w-full rounded-md border border-textC py-2 indent-5 outline-textC2"
           type="text"
           placeholder="Untitled folder"
+          onChange={(e) => setFolderName(e.target.value)}
         />
-        <div className=" text-textC2 flex w-full justify-end space-x-5 pr-3 font-medium">
+        <div className=" flex w-full justify-end space-x-5 pr-3 font-medium text-textC2">
           <button
             type="button"
-            onClick={() => setAddNewFolder(false)}
-            className="hover:bg-darkC2 rounded-full px-3 py-2"
+            onClick={() => setFolderToggle(false)}
+            className="rounded-full px-3 py-2 hover:bg-darkC2"
           >
             Cancel
           </button>
-          <button className="hover:bg-darkC2 rounded-full px-3 py-2">
+          <button
+            onClick={() => addFolder()}
+            className="rounded-full px-3 py-2 hover:bg-darkC2"
+          >
             Create
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

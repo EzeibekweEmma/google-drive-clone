@@ -1,11 +1,9 @@
-import { uploadBytes } from "firebase/storage";
 import React from "react";
 import { MdUploadFile } from "react-icons/md";
-// import fileUpload from "@/API/FileUpload";
 
 function UploadFileBtn({ uploadFile }: { uploadFile: Function }) {
   return (
-    <button className="hover:bg-darkC relative flex w-full items-center space-x-3 px-4 py-1.5">
+    <button className="relative flex w-full items-center space-x-3 px-4 py-1.5 hover:bg-darkC">
       <MdUploadFile className="h-5 w-5" />
       <input
         type="file"

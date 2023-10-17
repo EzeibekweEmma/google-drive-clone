@@ -4,10 +4,10 @@ import UploadFileBtn from "./UploadFileBtn";
 
 // The DropDown component renders a dropdown menu for creating new folders and uploading files.
 function DropDown({
-  setAddNewFolder,
+  setFolderToggle,
   setIsDropDown,
   uploadFile,
-}: AddNewFolderAndUpload) {
+}: folderToggleAndUpload) {
   return (
     <div
       onClick={() => setIsDropDown(false)} // Close the pop-up when clicking outside
@@ -17,13 +17,13 @@ function DropDown({
         onClick={(e) => {
           e.stopPropagation(); // Prevent clicks inside the form from closing the pop-up
         }}
-        className="text-textC absolute left-6 top-[68px] w-72 rounded-md bg-white shadow-md shadow-[#bbb]"
+        className="absolute left-6 top-[68px] w-72 rounded-md bg-white text-textC shadow-md shadow-[#bbb]"
       >
         {/* New folder section */}
         <div className="border-b py-2">
           <button
-            onClick={() => setAddNewFolder(true)} // Trigger the "New folder" action
-            className="hover:bg-darkC flex w-full items-center space-x-3 px-4 py-1.5"
+            onClick={() => setFolderToggle(true)} // Trigger the "New folder" action
+            className="flex w-full items-center space-x-3 px-4 py-1.5 hover:bg-darkC"
           >
             <MdOutlineCreateNewFolder className="h-5 w-5" />
             {/* Icon for creating a new folder */}
@@ -35,7 +35,7 @@ function DropDown({
           {/* Upload file button */}
           <UploadFileBtn uploadFile={uploadFile} />
           {/* Folder upload button */}
-          <button className="hover:bg-darkC flex w-full items-center space-x-3 px-4 py-1.5">
+          <button className="flex w-full items-center space-x-3 px-4 py-1.5 hover:bg-darkC">
             <MdDriveFolderUpload className="h-5 w-5" />
             <span>Folder upload</span>
           </button>

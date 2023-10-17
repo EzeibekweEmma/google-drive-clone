@@ -1,6 +1,6 @@
 import { storage } from "@/firebaseConfig";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import addFiles from "@/API/Firestore";
+import { addFiles } from "@/API/Firestore";
 
 const fileUpload = (
   file: any,
