@@ -10,6 +10,7 @@ function AddFolder({
     uploadFolder();
     setFolderToggle(false);
   };
+
   return (
     // Background overlay for the pop-up
     <div

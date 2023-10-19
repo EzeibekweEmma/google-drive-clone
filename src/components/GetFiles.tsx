@@ -4,8 +4,8 @@ import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
-function GetFiles() {
-  let fileList = fetchFiles();
+function GetFiles({ folderId }: { folderId: string }) {
+  let fileList = fetchFiles(folderId);
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
   };
@@ -25,7 +25,7 @@ function GetFiles() {
         height="500"
         width="500"
         draggable={false}
-        className="h-full w-full rounded-md object-cover object-center"
+        className="h-full w-full rounded-sm object-cover object-center"
       />
     ) : file.fileExtension === "mp3" ? (
       <div className="flex flex-col items-center justify-center">

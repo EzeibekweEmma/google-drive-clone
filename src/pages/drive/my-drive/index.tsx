@@ -11,8 +11,8 @@ export default function Home() {
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="">
-        <div className="mb-5 flex flex-col space-y-4">
+      <div>
+        <div className="flex flex-col space-y-6 p-5 pb-2">
           <h2 className="text-2xl">My Drive</h2>
           <div className="flex items-center space-x-2">
             <button className="flex items-center space-x-2 rounded-lg border border-textC px-4 py-1 text-sm font-medium">
@@ -29,18 +29,17 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div>
+        <div className="h-[75vh] w-full overflow-y-auto p-5">
           <div className="mb-5 flex flex-col space-y-4">
             <h2>Folders</h2>
             <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-              <GetFolders />
-              <GetFolders />
+              <GetFolders folderId="" />
             </div>
           </div>
           <div className="mb-5 flex flex-col space-y-4">
             <h2>Files</h2>
             <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-              <GetFiles />
+              <GetFiles folderId="" />
             </div>
           </div>
         </div>

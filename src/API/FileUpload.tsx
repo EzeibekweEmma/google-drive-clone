@@ -5,7 +5,7 @@ import { addFiles } from "@/API/Firestore";
 const fileUpload = (
   file: any,
   setProgress: Function,
-  // parentId: string,
+  parentId: string,
   // userEmail: string,
   // ownerEmail: string,
 ) => {
@@ -25,7 +25,7 @@ const fileUpload = (
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        addFiles(downloadURL, file.name);
+        addFiles(downloadURL, file.name, parentId);
       });
     },
   );

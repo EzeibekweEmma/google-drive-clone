@@ -4,8 +4,8 @@ import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 
-function GetFolders() {
-  let folderList = fetchFiles();
+function GetFolders({ folderId }: { folderId: string }) {
+  let folderList = fetchFiles(folderId);
   const router = useRouter();
   const folders = folderList.map((folder) => {
     return (

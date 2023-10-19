@@ -18,7 +18,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <SideMenu />
           </div>
           <div className="flex flex-1">
-            <div className="h-[90%] w-full overflow-x-hidden overflow-y-scroll rounded-2xl bg-white p-5">
+            <div className="h-[90vh] w-full overflow-hidden rounded-2xl bg-white">
               <Component {...pageProps} />
             </div>
           </div>

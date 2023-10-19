@@ -44,6 +44,7 @@ interface FileListProps {
   fileLink: string;
   fileName: string;
   fileExtension: string;
+  folderId: string;
 }
 
 interface payloadProps {

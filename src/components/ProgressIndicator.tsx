@@ -42,10 +42,10 @@ function ProgressIndicator({
 
   return (
     fileName.length > 0 && (
-      <div className="relative bottom-0 w-screen">
+      <div className="absolute bottom-0 w-screen">
         <div
           className={`absolute right-10 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC ${
-            minimize ? "-bottom-3" : "-bottom-0"
+            minimize ? "-bottom-3" : "-top-10"
           }`}
         >
           <div className="flex items-center justify-between bg-bgc py-2 pl-4 pr-2">

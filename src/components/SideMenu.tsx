@@ -7,21 +7,30 @@ import Navbar from "./Navbar";
 import fileUpload from "@/API/FileUpload";
 import ProgressIndicator from "./ProgressIndicator";
 import { addFolder } from "@/API/Firestore";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
+  // TODO: change uploadStatus to progress
   // const [uploadStatus, setUploadStatus] = useState([]);
   const [progress, setProgress] = useState([]);
   const [fileName, setFileName] = useState<string[]>([]);
   const [folderName, setFolderName] = useState<string>("");
   const [folderToggle, setFolderToggle] = useState(false);
 
+  const router = useRouter();
+  const { Folder } = router.query;
+
+  const { data: session } = useSession();
+  const userEmail = session?.user.email;
+
   // Add new file
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setFileName((prev) => [...prev, file.name]);
-    fileUpload(file, setProgress);
+    fileUpload(file, setProgress, Folder?.[1] || "");
   };
   fileName.reverse();
   progress.reverse();
@@ -32,6 +41,8 @@ function SideMenu() {
       folderName: folderName === "" ? "Untitled folder" : folderName,
       isFolder: true,
       FileList: [],
+      folderId: Folder?.[1] || "",
+      userEmail,
     };
 
     addFolder(payload);
@@ -39,7 +50,7 @@ function SideMenu() {
   };
 
   return (
-    <section className="relative w-60 space-y-4">
+    <section className="relative h-[90vh] w-60 space-y-4">
       <button
         onClick={() => setIsDropDown(true)}
         className="mt-1 flex w-fit items-center justify-center
