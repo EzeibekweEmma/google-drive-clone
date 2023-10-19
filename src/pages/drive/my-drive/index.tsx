@@ -1,9 +1,31 @@
 import Head from "next/head";
-import { AiFillCaretDown } from "react-icons/ai";
 import GetFiles from "@/components/GetFiles";
 import GetFolders from "@/components/GetFolders";
+import FileHeader from "@/components/FileHeader";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { fetchFiles } from "@/hooks/fetchFiles";
 
 export default function Home() {
+  const [isFolder, setIsFolder] = useState(false);
+  const [isFile, setIsFile] = useState(false);
+
+  const { data: session } = useSession();
+
+  // Fetch the list of files and folders
+  const list = fetchFiles("", session?.user.email!);
+
+  useEffect(() => {
+    // Determine if there are folders and files in the list
+    const hasFolders = list.some((item) => item.isFolder);
+    const hasFiles = list.some((item) => !item.isFolder);
+
+    // Update the state based on the results
+    setIsFolder(hasFolders);
+    setIsFile(hasFiles);
+  }, [list]);
+
   return (
     <>
       <Head>
@@ -12,36 +34,46 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <div className="flex flex-col space-y-6 p-5 pb-2">
-          <h2 className="text-2xl">My Drive</h2>
-          <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 rounded-lg border border-textC px-4 py-1 text-sm font-medium">
-              <span>Type</span>
-              <AiFillCaretDown className="mt-0.5 h-3 w-3" />
-            </button>
-            <button className="flex items-center space-x-2 rounded-lg border border-textC px-4 py-1 text-sm font-medium">
-              <span>People</span>
-              <AiFillCaretDown className="mt-0.5 h-3 w-3" />
-            </button>
-            <button className="flex items-center space-x-2 rounded-lg border border-textC px-4 py-1 text-sm font-medium">
-              <span>Modified</span>
-              <AiFillCaretDown className="mt-0.5 h-3 w-3" />
-            </button>
-          </div>
-        </div>
+        <FileHeader headerName={"My Drive"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
-          <div className="mb-5 flex flex-col space-y-4">
-            <h2>Folders</h2>
-            <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-              <GetFolders folderId="" />
+          {/* If there are files or folders, display them */}
+          {isFile || isFolder ? (
+            <>
+              {isFolder && (
+                // If there are folders, display them
+                <div className="mb-5 flex flex-col space-y-4">
+                  <h2>Folders</h2>
+                  <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
+                    <GetFolders folderId="" />
+                  </div>
+                </div>
+              )}
+              {isFile && (
+                // If there are files, display them
+                <div className="mb-5 flex flex-col space-y-4">
+                  <h2>Files</h2>
+                  <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
+                    <GetFiles folderId="" />
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            // If there are no files or folders, display the empty state
+            <div className="flex h-full flex-col items-center justify-center">
+              <h2 className="mb-5 text-xl font-medium text-textC">
+                A place for all of your files
+              </h2>
+              <Image
+                draggable={false}
+                src="/empty_state_drive.png"
+                width={500}
+                height={500}
+                alt="empty-state"
+                className="w-full max-w-2xl object-cover object-center"
+              />
             </div>
-          </div>
-          <div className="mb-5 flex flex-col space-y-4">
-            <h2>Files</h2>
-            <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-              <GetFiles folderId="" />
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </>
