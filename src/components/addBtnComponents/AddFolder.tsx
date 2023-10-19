@@ -15,7 +15,7 @@ function AddFolder({
     // Background overlay for the pop-up
     <div
       onClick={() => setFolderToggle(false)} // Close the pop-up when clicking outside
-      className="absolute -left-5 -top-20 flex h-screen w-screen items-center justify-center bg-darkC2/40"
+      className="absolute -left-5 -top-20 z-20 flex h-screen w-screen items-center justify-center bg-darkC2/40"
     >
       {/* Pop-up form for creating a new folder */}
       <div
