@@ -3,9 +3,11 @@ import React from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 function GetFolders({ folderId }: { folderId: string }) {
-  let folderList = fetchFiles(folderId);
+  const { data: session } = useSession();
+  let folderList = fetchFiles(folderId, session?.user.email!);
   const router = useRouter();
   const folders = folderList.map((folder) => {
     return (

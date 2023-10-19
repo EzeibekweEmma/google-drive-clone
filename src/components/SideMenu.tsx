@@ -30,7 +30,7 @@ function SideMenu() {
     const file = e.target.files?.[0];
     if (!file) return;
     setFileName((prev) => [...prev, file.name]);
-    fileUpload(file, setProgress, Folder?.[1] || "");
+    fileUpload(file, setProgress, Folder?.[1] || "", userEmail!);
   };
   fileName.reverse();
   progress.reverse();

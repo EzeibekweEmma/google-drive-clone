@@ -4,7 +4,7 @@ interface Button {
   onClick?: () => void;
 }
 
-interface GithubAuth {
+interface GoogleAuth {
   clientId: string;
   clientSecret: string;
 }

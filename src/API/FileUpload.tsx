@@ -6,7 +6,7 @@ const fileUpload = (
   file: any,
   setProgress: Function,
   parentId: string,
-  // userEmail: string,
+  userEmail: string,
   // ownerEmail: string,
 ) => {
   const storageRef = ref(storage, `files/${file.name}`);
@@ -25,7 +25,7 @@ const fileUpload = (
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        addFiles(downloadURL, file.name, parentId);
+        addFiles(downloadURL, file.name, parentId, userEmail);
       });
     },
   );

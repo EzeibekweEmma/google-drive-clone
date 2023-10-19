@@ -3,9 +3,11 @@ import { fetchFiles } from "@/hooks/fetchFiles";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useSession } from "next-auth/react";
 
 function GetFiles({ folderId }: { folderId: string }) {
-  let fileList = fetchFiles(folderId);
+  const { data: session } = useSession();
+  let fileList = fetchFiles(folderId, session?.user.email!);
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
   };
