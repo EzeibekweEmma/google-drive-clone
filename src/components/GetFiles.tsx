@@ -18,7 +18,7 @@ function GetFiles({ folderId }: { folderId: string }) {
       ? fileIcons[file.fileExtension]
       : fileIcons["any"];
 
-    const img = ["jpg", "ico", "svg", "webp", "png", "jpeg", "gif"].includes(
+    const img = ["jpg", "ico", "webp", "png", "jpeg", "gif"].includes(
       file.fileExtension,
     ) ? (
       <Image
