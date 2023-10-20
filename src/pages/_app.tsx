@@ -2,7 +2,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import "@/styles/globals.css";
-import Header from "@/components/Header";
+import Header from "@/components/headerComponents/Header";
 import SideMenu from "@/components/SideMenu";
 
 const MyApp: AppType<{ session: Session | null }> = ({

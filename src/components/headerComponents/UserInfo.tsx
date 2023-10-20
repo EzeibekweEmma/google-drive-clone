@@ -8,12 +8,16 @@ import { signOut, useSession } from "next-auth/react";
 function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
   const { data: session } = useSession();
   return (
-    <div className="bg-darkC2 text-textC relative flex flex-col items-center justify-center space-y-3 rounded-2xl px-5 py-3 text-sm font-medium shadow-md shadow-[#b4bebb]">
+    <div
+      className="relative z-10 flex flex-col items-center justify-center
+    space-y-3 rounded-2xl bg-darkC2 px-5 py-3 text-sm font-medium text-textC
+    shadow-md shadow-[#b4bebb]"
+    >
       <button
         onClick={() => setDisplayUserInfo((prev: boolean) => false)}
-        className="hover:bg-darkC bg-darkC2 absolute right-3 top-3 rounded-full p-1"
+        className="absolute right-3 top-3 rounded-full bg-darkC2 p-1 hover:bg-darkC"
       >
-        <AiOutlineClose className="text-textC h-5 w-5 rounded-full stroke-2" />
+        <AiOutlineClose className="h-5 w-5 rounded-full stroke-2 text-textC" />
       </button>
       <p>{session?.user.email}</p>
       <div className="h-20 w-20 rounded-full border">
@@ -26,18 +30,20 @@ function UserInfo({ setDisplayUserInfo }: UserInfoProps) {
           alt="avatar"
         />
       </div>
-      <h2 className="text-2xl font-normal">Hi, {session?.user.name}!</h2>
-      <button className="text-textC2 rounded-full border border-black px-7 py-2 hover:bg-[#d3dfee]">
+      <h2 className="tablet:text-2xl text-xl font-normal">
+        Hi, {session?.user.name}!
+      </h2>
+      <button className="rounded-full border border-black px-7 py-2 text-textC2 hover:bg-[#d3dfee]">
         Manage your Google Account
       </button>
       <div className="flex space-x-1">
-        <button className="hover:bg-darkC flex w-44 items-center space-x-2 rounded-l-full bg-white py-3  pl-3">
-          <HiOutlinePlus className="bg-darkC2 text-textC2 h-7 w-7 rounded-full p-1" />
+        <button className="tablet:w-44 flex w-36 items-center space-x-2 rounded-l-full bg-white py-3 pl-3  hover:bg-darkC">
+          <HiOutlinePlus className="h-7 w-7 rounded-full bg-darkC2 p-1 text-textC2" />
           <span>Add account</span>
         </button>
         <button
           onClick={() => signOut()}
-          className="hover:bg-darkC flex w-44 items-center space-x-2 rounded-r-full bg-white py-3  pl-3"
+          className="tablet:w-44 flex w-36 items-center space-x-2 rounded-r-full bg-white py-3 pl-3  hover:bg-darkC"
         >
           <PiSignOutBold className="h-6 w-6" />
           <span>Sign out</span>
