@@ -50,15 +50,15 @@ function SideMenu() {
   };
 
   return (
-    <section className="relative h-[90vh] w-60 space-y-4">
+    <section className="tablet:w-60 relative h-[90vh] w-16 space-y-4 duration-500">
       <button
         onClick={() => setIsDropDown(true)}
-        className="mt-1 flex w-fit items-center justify-center
-      space-x-2 rounded-2xl bg-white px-5 py-4 text-textC
+        className="tablet:px-5 tablet:py-4 mt-1 flex w-fit items-center
+      justify-center space-x-2 rounded-2xl bg-white p-3 text-textC
       shadow-md shadow-[#ddd] duration-300 hover:bg-darkC2 hover:shadow-[#bbb]"
       >
         <HiOutlinePlusSm className="h-6 w-6" />
-        <span className="text-sm font-medium">New</span>
+        <span className="tablet:block hidden text-sm font-medium">New</span>
       </button>
       {/* Add new file or folder drop down */}
       {isDropDown && (

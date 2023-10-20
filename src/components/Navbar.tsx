@@ -9,24 +9,24 @@ function Navbar() {
     <nav className="space-y-0.5 pr-5">
       <Link
         href={"/drive/my-drive"}
-        className="hover:bg-darkC flex items-center space-x-3 rounded-full px-4 py-1.5"
+        className="tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC"
       >
-        <DiGoogleDrive className="border-textC h-5 w-5 rounded-sm border-[2.3px]" />
-        <span>My Drive</span>
+        <DiGoogleDrive className="tablet:h-5 tablet:w-5 h-6 w-6 rounded-sm border-[2.3px] border-textC" />
+        <span className="tablet:block hidden">My Drive</span>
       </Link>
       <Link
         href={"/drive/starred"}
-        className="hover:bg-darkC flex items-center space-x-3 rounded-full px-4 py-1.5"
+        className="tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC"
       >
-        <MdStarBorder className="h-5 w-5" />
-        <span>Starred</span>
+        <MdStarBorder className="tablet:h-5 tablet:w-5 h-6 w-6" />
+        <span className="tablet:block hidden">Starred</span>
       </Link>
       <Link
         href={"/drive/trash"}
-        className="hover:bg-darkC flex items-center space-x-3 rounded-full px-4 py-1.5"
+        className="tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC"
       >
-        <RiDeleteBin6Line className="h-5 w-5" />
-        <span>Bin</span>
+        <RiDeleteBin6Line className="tablet:h-5 tablet:w-5 h-6 w-6" />
+        <span className="tablet:block hidden">Bin</span>
       </Link>
     </nav>
   );

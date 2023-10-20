@@ -12,6 +12,9 @@ export default {
         darkC: "#E1E5EA",
       },
     },
+    screens: {
+      tablet: "840px",
+    },
   },
   plugins: [],
 } satisfies Config;

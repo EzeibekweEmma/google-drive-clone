@@ -34,7 +34,7 @@ function Folder() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 2200);
   }, [list]);
 
   return (
