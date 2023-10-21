@@ -7,7 +7,7 @@ let files = collection(database, "files");
 export const fetchAllFiles = (userEmail: string) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
-  const getFolders = () => {
+  const allFiles = () => {
     if (userEmail) {
       const getUserFiles = query(files, where("userEmail", "==", userEmail));
       onSnapshot(getUserFiles, (res) => {
@@ -33,7 +33,7 @@ export const fetchAllFiles = (userEmail: string) => {
   };
 
   useEffect(() => {
-    getFolders();
+    allFiles();
   }, [userEmail]);
 
   return fileList;
