@@ -54,7 +54,7 @@ function FileDropDown({ file, setOpenMenu }: FileDropDownProps) {
           <MdStarRate className="h-5 w-5" />
         )}
         <span
-          onClick={() => starFile(file.id, file.isStarred)}
+          onClick={() => starFile(file.id, !file.isStarred)}
           className="text-sm"
         >
           Add to starred
