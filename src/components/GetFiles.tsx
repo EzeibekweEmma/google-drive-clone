@@ -23,7 +23,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     // Toggle the dropdown for the given file
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
-  // TODO also check if isTrash is true
+
   const list = fileList.map((file) => {
     // getting the icon for the file
     const icon =
@@ -90,7 +90,13 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
               {
                 /* drop down */
                 openMenu === file.id && (
-                  <FileDropDown file={file} setOpenMenu={setOpenMenu} />
+                  <FileDropDown
+                    file={file}
+                    setOpenMenu={setOpenMenu}
+                    isFolderComp={false}
+                    select={select}
+                    folderId=""
+                  />
                 )
               }
             </div>

@@ -66,5 +66,8 @@ interface FileDropDownProps {
     fileExtension: string;
     folderId: string;
   };
+  folderId: string;
+  isFolderComp: boolean;
+  select: string;
   setOpenMenu: React.Dispatch<React.SetStateAction<string>>;
 }
