@@ -42,7 +42,8 @@ export default function Home() {
       <div>
         <FileHeader headerName={"My Drive"} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
-          {isLoading ? (
+          {/* If the list is loading, display the loading state */}
+          {!isFile && !isFolder && isLoading ? (
             <div className="flex h-full items-center justify-center">
               <DotLoader color="#b8c2d7" size={60} />
             </div>
