@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { fetchFiles } from "@/hooks/fetchFiles";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSession } from "next-auth/react";
+import FileDropDown from "./FileDropDown";
 
 function GetFiles({ folderId }: { folderId: string }) {
+  const [openMenu, setOpenMenu] = useState("");
+
   const { data: session } = useSession();
   let fileList = fetchFiles(folderId, session?.user.email!);
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
+  };
+
+  const handleMenuToggle = (fileId: string) => {
+    // Toggle the dropdown for the given file
+    setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
   const list = fileList.map((file) => {
@@ -45,6 +53,7 @@ function GetFiles({ folderId }: { folderId: string }) {
     ) : (
       <div className="h-36 w-36 ">{icon}</div>
     );
+
     return (
       !file?.isFolder && (
         <div
@@ -52,15 +61,27 @@ function GetFiles({ folderId }: { folderId: string }) {
           onDoubleClick={() => openFile(file.fileLink)}
           className="hover:cursor-alias"
         >
-          <div className="flex w-full flex-col items-center justify-center overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC">
-            <div className="flex w-full items-center justify-between px-1 py-3">
+          <div
+            className="flex w-full flex-col items-center justify-center
+          overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
+          >
+            <div className="relative flex w-full items-center justify-between px-1 py-3">
               <div className="flex items-center space-x-4">
                 <div className="h-6 w-6">{icon}</div>
                 <span className="w-32 truncate text-sm font-medium text-textC">
                   {file.fileName}
                 </span>
               </div>
-              <BsThreeDotsVertical className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]" />
+              <BsThreeDotsVertical
+                onClick={() => handleMenuToggle(file.id)}
+                className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
+              />
+              {
+                /* drop down */
+                openMenu === file.id && (
+                  <FileDropDown file={file} setOpenMenu={setOpenMenu} />
+                )
+              }
             </div>
             <div className="flex h-44 w-48 items-center justify-center pb-2.5">
               {img}

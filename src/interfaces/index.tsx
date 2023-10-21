@@ -43,12 +43,28 @@ interface FileListProps {
   id: string;
   fileLink: string;
   fileName: string;
+  isStarred: boolean;
+  isTrashed: boolean;
   fileExtension: string;
   folderId: string;
 }
-
 interface payloadProps {
   folderName: string;
   isFolder: boolean;
   FileList: object;
+}
+
+interface FileDropDownProps {
+  file: {
+    folderName: string;
+    isFolder: boolean;
+    isStarred: boolean;
+    isTrashed: boolean;
+    id: string;
+    fileLink: string;
+    fileName: string;
+    fileExtension: string;
+    folderId: string;
+  };
+  setOpenMenu: React.Dispatch<React.SetStateAction<string>>;
 }

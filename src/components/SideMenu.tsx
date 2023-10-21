@@ -40,6 +40,8 @@ function SideMenu() {
     let payload = {
       folderName: folderName === "" ? "Untitled folder" : folderName,
       isFolder: true,
+      isStarred: false,
+      isTrashed: false,
       FileList: [],
       folderId: Folder?.[1] || "",
       userEmail,
