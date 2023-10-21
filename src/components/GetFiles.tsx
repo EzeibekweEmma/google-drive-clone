@@ -26,11 +26,11 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   // TODO also check if isTrash is true
   const list = fileList.map((file) => {
     // getting the icon for the file
-    const icon = fileIcons[file.fileExtension]
-      ? fileIcons[file.fileExtension]
-      : fileIcons["any"];
+    const icon =
+      fileIcons[file.fileExtension as keyof typeof fileIcons] ??
+      fileIcons["any"];
 
-    const img = ["jpg", "ico", "webp", "png", "jpeg", "gif"].includes(
+    const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
       file.fileExtension,
     ) ? (
       <Image
@@ -59,8 +59,9 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     );
 
     // set a condition for the files to be displayed
-    let condition = !file?.isFolder;
-    if (select === "starred") condition = !file?.isFolder && file?.isStarred;
+    let condition = !file?.isFolder && !file?.isTrashed;
+    if (select === "starred")
+      condition = !file?.isFolder && file?.isStarred && !file?.isTrashed;
     else if (select === "trashed")
       condition = !file?.isFolder && file?.isTrashed;
 

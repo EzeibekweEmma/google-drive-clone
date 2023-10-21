@@ -20,8 +20,8 @@ export default function Home() {
 
   useEffect(() => {
     // Determine if there are folders and files in the list
-    const hasFolders = list.some((item) => item.isFolder);
-    const hasFiles = list.some((item) => !item.isFolder);
+    const hasFolders = list.some((item) => item.isFolder && !item.isTrashed);
+    const hasFiles = list.some((item) => !item.isFolder && !item.isTrashed);
 
     // Update the state based on the results
     setIsFolder(hasFolders);

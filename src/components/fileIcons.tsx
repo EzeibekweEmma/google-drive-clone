@@ -14,6 +14,7 @@ const fileIcons = {
   jpg: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   jpeg: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   png: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
+  jfif: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   gif: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   webp: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,
   ico: <BiSolidImageAlt className="h-full w-full text-[#CA2E24]" />,

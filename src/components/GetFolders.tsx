@@ -21,8 +21,9 @@ function GetFolders({
   const router = useRouter();
   const folders = folderList.map((folder) => {
     // set a condition for the folders to be displayed
-    let condition = folder?.isFolder;
-    if (select === "starred") condition = folder?.isFolder && folder?.isStarred;
+    let condition = folder?.isFolder && !folder?.isTrashed;
+    if (select === "starred")
+      condition = folder?.isFolder && folder?.isStarred && !folder?.isTrashed;
     else if (select === "trashed")
       condition = folder?.isFolder && folder?.isTrashed;
 

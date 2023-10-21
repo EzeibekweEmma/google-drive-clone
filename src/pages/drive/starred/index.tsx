@@ -20,8 +20,12 @@ export default function Index() {
 
   useEffect(() => {
     // Determine if there are folders and files in the list
-    const hasFolders = list.some((item) => item.isFolder && item.isStarred);
-    const hasFiles = list.some((item) => !item.isFolder && item.isStarred);
+    const hasFolders = list.some(
+      (item) => item.isFolder && item.isStarred && !item.isTrashed,
+    );
+    const hasFiles = list.some(
+      (item) => !item.isFolder && item.isStarred && !item.isTrashed,
+    );
     // Update the state based on the results
     setIsFolder(hasFolders);
     setIsFile(hasFiles);
