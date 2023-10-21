@@ -1,14 +1,22 @@
 import React from "react";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
-import { MdDriveFileRenameOutline, MdStarBorder } from "react-icons/md";
+import {
+  MdDriveFileRenameOutline,
+  MdStarBorder,
+  MdStarRate,
+} from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { GrDownload } from "react-icons/gr";
-import { deleteFile, starFile, trashFile } from "@/API/Firestore";
+import { TbDownload } from "react-icons/tb";
+import { renameFile, starFile, trashFile } from "@/API/Firestore";
 
 function FileDropDown({ file, setOpenMenu }: FileDropDownProps) {
   const openFile = (fileLink: string) => {
     // Open the file in a new tab
     window.open(fileLink, "_blank");
+  };
+
+  const changeFileName = (fileId: string, fileName: string) => {
+    renameFile(fileId, fileName);
   };
 
   return (
@@ -28,21 +36,25 @@ function FileDropDown({ file, setOpenMenu }: FileDropDownProps) {
         download={file.fileName}
         className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
       >
-        <GrDownload className="h-5 w-5" />
+        <TbDownload className="h-5 w-5" />
         <span className="text-sm">Download</span>
       </a>
 
       <div
-        onClick={() => deleteFile(file.id)}
+        onClick={() => changeFileName(file.id, file.fileName)}
         className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
       >
         <MdDriveFileRenameOutline className="h-5 w-5" />
         <span className="text-sm">Rename</span>
       </div>
       <div className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]">
-        <MdStarBorder className="h-5 w-5" />
+        {!file.isStarred ? (
+          <MdStarBorder className="h-5 w-5" />
+        ) : (
+          <MdStarRate className="h-5 w-5" />
+        )}
         <span
-          onClick={() => starFile(file.id, !file.isStarred)}
+          onClick={() => starFile(file.id, file.isStarred)}
           className="text-sm"
         >
           Add to starred

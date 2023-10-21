@@ -4,14 +4,30 @@ import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 
-function GetFolders({ folderId }: { folderId: string }) {
+function GetFolders({
+  folderId,
+  select,
+}: {
+  folderId: string;
+  select: string;
+}) {
   const { data: session } = useSession();
+
   let folderList = fetchFiles(folderId, session?.user.email!);
+  if (select) folderList = fetchAllFiles(session?.user.email!);
+
   const router = useRouter();
   const folders = folderList.map((folder) => {
+    // set a condition for the folders to be displayed
+    let condition = folder?.isFolder;
+    if (select === "starred") condition = folder?.isFolder && folder?.isStarred;
+    else if (select === "trashed")
+      condition = folder?.isFolder && folder?.isTrashed;
+
     return (
-      folder?.isFolder && (
+      condition && (
         <div
           key={folder.id}
           onDoubleClick={() => router.push("/drive/folders/" + folder.id)}

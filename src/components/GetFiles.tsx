@@ -5,12 +5,16 @@ import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSession } from "next-auth/react";
 import FileDropDown from "./FileDropDown";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 
-function GetFiles({ folderId }: { folderId: string }) {
+function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   const [openMenu, setOpenMenu] = useState("");
 
   const { data: session } = useSession();
+
   let fileList = fetchFiles(folderId, session?.user.email!);
+  if (select) fileList = fetchAllFiles(session?.user.email!);
+
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
   };
@@ -19,7 +23,7 @@ function GetFiles({ folderId }: { folderId: string }) {
     // Toggle the dropdown for the given file
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
-
+  // TODO also check if isTrash is true
   const list = fileList.map((file) => {
     // getting the icon for the file
     const icon = fileIcons[file.fileExtension]
@@ -54,8 +58,14 @@ function GetFiles({ folderId }: { folderId: string }) {
       <div className="h-36 w-36 ">{icon}</div>
     );
 
+    // set a condition for the files to be displayed
+    let condition = !file?.isFolder;
+    if (select === "starred") condition = !file?.isFolder && file?.isStarred;
+    else if (select === "trashed")
+      condition = !file?.isFolder && file?.isTrashed;
+
     return (
-      !file?.isFolder && (
+      condition && (
         <div
           key={file.id}
           onDoubleClick={() => openFile(file.fileLink)}
@@ -63,7 +73,7 @@ function GetFiles({ folderId }: { folderId: string }) {
         >
           <div
             className="flex w-full flex-col items-center justify-center
-          overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
+         overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
           >
             <div className="relative flex w-full items-center justify-between px-1 py-3">
               <div className="flex items-center space-x-4">
