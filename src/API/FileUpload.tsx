@@ -7,7 +7,6 @@ const fileUpload = (
   setProgress: Function,
   parentId: string,
   userEmail: string,
-  // ownerEmail: string,
 ) => {
   const storageRef = ref(storage, `files/${file.name}`);
   const uploadTask = uploadBytesResumable(storageRef, file);

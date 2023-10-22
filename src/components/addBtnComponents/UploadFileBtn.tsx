@@ -7,6 +7,7 @@ function UploadFileBtn({ uploadFile }: { uploadFile: Function }) {
       <MdUploadFile className="h-5 w-5" />
       <input
         type="file"
+        multiple
         onChange={(e) => uploadFile(e)}
         className="absolute -left-3 top-0 h-full w-full cursor-pointer bg-slate-300 opacity-0"
       />

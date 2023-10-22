@@ -27,10 +27,14 @@ function SideMenu() {
 
   // Add new file
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setFileName((prev) => [...prev, file.name]);
-    fileUpload(file, setProgress, Folder?.[1] || "", userEmail!);
+    const files = e.target.files || [];
+    console.log(files);
+    for (let i = 0; i < files.length; i++) {
+      const file = files?.[i];
+      if (!file) return;
+      setFileName((prev) => [...prev, file.name]);
+      fileUpload(file, setProgress, Folder?.[1] || "", userEmail!);
+    }
   };
   fileName.reverse();
   progress.reverse();
