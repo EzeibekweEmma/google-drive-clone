@@ -5,6 +5,9 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 
 let files = collection(database, "files");
@@ -74,11 +77,26 @@ export const trashFile = async (fileId: string, isTrashed: boolean) => {
   }
 };
 
-export const deleteFile = async (fileId: string) => {
+export const deleteFile = async (fileId: string, isFolder: boolean) => {
   const fileRef = doc(files, fileId);
   try {
+    // Delete the file or folder itself
     await deleteDoc(fileRef);
+
+    // If it's a folder, also delete all files with the same folderId
+    if (isFolder && fileId) {
+      const filesQuery = query(files, where("folderId", "==", fileId));
+      const querySnapshot = await getDocs(filesQuery);
+
+      const deletePromises: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        deletePromises.push(deleteDoc(doc.ref));
+      });
+
+      await Promise.all(deletePromises);
+    }
   } catch (error) {
-    console.error("Error deleting file: ", error);
+    console.error("Error deleting file or folder: ", error);
   }
 };

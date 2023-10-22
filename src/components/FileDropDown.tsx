@@ -98,7 +98,7 @@ function FileDropDown({
             <span className="text-sm">Restore</span>
           </div>
           <div
-            onClick={() => deleteFile(file.id)}
+            onClick={() => deleteFile(file.id, file.isFolder)}
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <RiDeleteBin6Line className="h-5 w-5" />
