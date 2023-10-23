@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 import FileDropDown from "./FileDropDown";
+import Rename from "./Rename";
 
 function GetFolders({
   folderId,
@@ -15,6 +16,7 @@ function GetFolders({
   select: string;
 }) {
   const [openMenu, setOpenMenu] = useState("");
+  const [renameToggle, setRenameToggle] = useState("");
 
   const { data: session } = useSession();
 
@@ -24,6 +26,7 @@ function GetFolders({
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
+    setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
@@ -63,6 +66,18 @@ function GetFolders({
                 isFolderComp={true}
                 select={select}
                 folderId={folder.id}
+                setRenameToggle={setRenameToggle}
+              />
+            )
+          }
+          {
+            // rename toggle
+            renameToggle === folder.id && (
+              <Rename
+                setRenameToggle={setRenameToggle}
+                fileId={folder.id}
+                isFolder={folder.isFolder}
+                fileExtension=""
               />
             )
           }

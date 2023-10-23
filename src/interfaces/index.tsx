@@ -70,4 +70,12 @@ interface FileDropDownProps {
   isFolderComp: boolean;
   select: string;
   setOpenMenu: React.Dispatch<React.SetStateAction<string>>;
+  setRenameToggle: React.Dispatch<React.SetStateAction<string>>;
+}
+
+interface renameProps {
+  fileExtension: string;
+  fileId: string;
+  isFolder: boolean;
+  setRenameToggle: React.Dispatch<React.SetStateAction<string>>;
 }

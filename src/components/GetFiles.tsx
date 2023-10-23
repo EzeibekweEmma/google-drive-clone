@@ -6,9 +6,11 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSession } from "next-auth/react";
 import FileDropDown from "./FileDropDown";
 import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import Rename from "./Rename";
 
 function GetFiles({ folderId, select }: { folderId: string; select: string }) {
   const [openMenu, setOpenMenu] = useState("");
+  const [renameToggle, setRenameToggle] = useState("");
 
   const { data: session } = useSession();
 
@@ -21,6 +23,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
+    setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
   };
 
@@ -96,6 +99,18 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                     isFolderComp={false}
                     select={select}
                     folderId=""
+                    setRenameToggle={setRenameToggle}
+                  />
+                )
+              }
+              {
+                // rename toggle
+                renameToggle === file.id && (
+                  <Rename
+                    setRenameToggle={setRenameToggle}
+                    fileId={file.id}
+                    isFolder={file.isFolder}
+                    fileExtension={file.fileExtension}
                   />
                 )
               }

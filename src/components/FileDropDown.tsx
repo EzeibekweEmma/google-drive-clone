@@ -17,16 +17,13 @@ function FileDropDown({
   select,
   isFolderComp,
   folderId,
+  setRenameToggle,
 }: FileDropDownProps) {
   const router = useRouter();
 
   const openFile = (fileLink: string) => {
     // Open the file in a new tab
     window.open(fileLink, "_blank");
-  };
-
-  const changeFileName = (fileId: string, fileName: string) => {
-    renameFile(fileId, fileName);
   };
 
   return (
@@ -61,27 +58,25 @@ function FileDropDown({
           )}
 
           <div
-            onClick={() => changeFileName(file.id, file.fileName)}
+            onClick={() => setRenameToggle(file.id)}
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <MdDriveFileRenameOutline className="h-5 w-5" />
             <span className="text-sm">Rename</span>
           </div>
-          <div className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]">
+          <div
+            onClick={() => starFile(file.id, !file.isStarred)}
+            className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
+          >
             {!file.isStarred ? (
               <MdStarBorder className="h-5 w-5" />
             ) : (
               <MdStarRate className="h-5 w-5" />
             )}
-            <span
-              onClick={() => starFile(file.id, !file.isStarred)}
-              className="text-sm"
-            >
-              Add to starred
-            </span>
+            <span className="text-sm">Add to starred</span>
           </div>
           <div
-            onClick={() => trashFile(file.id, !file.isTrashed)}
+            onClick={() => trashFile(file.id, true)}
             className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
           >
             <RiDeleteBin6Line className="h-5 w-5" />

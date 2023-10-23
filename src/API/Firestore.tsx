@@ -43,11 +43,15 @@ export const addFolder = (payload: payloadProps) => {
   }
 };
 
-export const renameFile = async (fileId: string, fileName: string) => {
+export const renameFile = async (
+  fileId: string,
+  newName: string,
+  isFolder: boolean,
+) => {
   const fileRef = doc(files, fileId);
   try {
     await updateDoc(fileRef, {
-      fileName: fileName,
+      [isFolder ? "folderName" : "fileName"]: newName,
     });
   } catch (error) {
     console.error("Error updating file properties: ", error);
