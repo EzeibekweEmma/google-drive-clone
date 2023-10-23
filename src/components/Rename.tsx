@@ -5,17 +5,23 @@ import React, { useState } from "react";
 function Rename({
   setRenameToggle,
   fileId,
+  fileName,
   isFolder,
   fileExtension,
 }: renameProps) {
-  const [newName, setNewName] = useState("");
+  const [newName, setNewName] = useState(fileName);
 
   const rename = () => {
     // Check if the file name is empty
     if (newName === "") return;
 
     if (isFolder) renameFile(fileId, newName, isFolder);
-    else renameFile(fileId, newName + "." + fileExtension, isFolder);
+    else {
+      const formatName = newName.includes(".")
+        ? newName
+        : newName + "." + fileExtension;
+      renameFile(fileId, formatName, isFolder);
+    }
     setRenameToggle("");
   };
 
@@ -26,6 +32,7 @@ function Rename({
         className="w-full rounded-md border border-textC py-1.5 indent-2 outline-textC2"
         type="text"
         placeholder="Rename"
+        value={newName}
         onChange={(e) => setNewName(e.target.value)}
       />
       <div className=" flex w-full justify-between  font-medium text-textC2">

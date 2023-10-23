@@ -76,6 +76,7 @@ function GetFolders({
               <Rename
                 setRenameToggle={setRenameToggle}
                 fileId={folder.id}
+                fileName={folder.folderName}
                 isFolder={folder.isFolder}
                 fileExtension=""
               />

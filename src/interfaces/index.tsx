@@ -75,6 +75,7 @@ interface FileDropDownProps {
 
 interface renameProps {
   fileExtension: string;
+  fileName: string;
   fileId: string;
   isFolder: boolean;
   setRenameToggle: React.Dispatch<React.SetStateAction<string>>;

@@ -16,7 +16,7 @@ function Navbar() {
       <Link
         href={"/drive/my-drive"}
         className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
-          isActive("/drive/my-drive") ? "bg-darkC2" : ""
+          isActive("/drive/my-drive") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/my-drive") ? (
@@ -29,7 +29,7 @@ function Navbar() {
       <Link
         href={"/drive/starred"}
         className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
-          isActive("/drive/starred") ? "bg-darkC2" : ""
+          isActive("/drive/starred") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/starred") ? (
@@ -43,7 +43,7 @@ function Navbar() {
       <Link
         href={"/drive/trash"}
         className={`tablet:justify-normal tablet:space-x-3 tablet:px-4 tablet:py-1.5 flex items-center justify-center rounded-full p-2 hover:bg-darkC ${
-          isActive("/drive/trash") ? "bg-darkC2" : ""
+          isActive("/drive/trash") ? "bg-[#C2E7FF]" : ""
         }`}
       >
         {isActive("/drive/trash") ? (

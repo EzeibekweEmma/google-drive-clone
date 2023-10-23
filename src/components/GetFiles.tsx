@@ -110,6 +110,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                     setRenameToggle={setRenameToggle}
                     fileId={file.id}
                     isFolder={file.isFolder}
+                    fileName={file.fileName}
                     fileExtension={file.fileExtension}
                   />
                 )
