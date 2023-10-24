@@ -24,7 +24,7 @@ function ProgressIndicator({
         className="flex cursor-pointer items-center justify-between bg-white py-2.5 pl-4 pr-2 hover:bg-darkC"
       >
         <div className="flex items-center space-x-3">
-          {fileIcons[fileExtension] ? (
+          {fileExtension && fileIcons[fileExtension] ? (
             <div className="h-6 w-6">{fileIcons[fileExtension]}</div>
           ) : (
             <div className="h-6 w-6">{fileIcons["any"]}</div>
@@ -44,7 +44,7 @@ function ProgressIndicator({
     fileName.length > 0 && (
       <div className="absolute bottom-0 w-screen">
         <div
-          className={`tablet:right-10 absolute right-8 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC ${
+          className={`absolute right-8 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
             minimize ? "-bottom-4" : "-top-10"
           }`}
         >
