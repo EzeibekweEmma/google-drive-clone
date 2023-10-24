@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 function Search() {
   const [searchTest, setSearchTest] = useState<string>("");
   const [onFocus, setOnFocus] = useState<boolean>(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { data: session } = useSession();
   let list = fetchAllFiles(session?.user.email!);
@@ -62,7 +62,11 @@ function Search() {
 
   // Event handler for the onClick event on the document
   const handleDocumentClick = (e: { target: any }) => {
-    if (inputRef.current && !inputRef.current.contains(e.target)) {
+    if (
+      inputRef.current &&
+      e.target &&
+      !inputRef.current.contains(e.target as Node)
+    ) {
       setOnFocus(false);
     }
   };
