@@ -31,6 +31,10 @@ interface PopUpProps {
   setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface FileIcons {
+  [key: string]: React.ReactNode;
+}
+
 interface ProgressIndicatorProps {
   progress: number[];
   fileName: string[];

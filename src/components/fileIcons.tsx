@@ -7,7 +7,7 @@ import {
   BiSolidFileDoc,
 } from "react-icons/bi";
 
-const fileIcons = {
+const fileIcons: FileIcons = {
   mp4: <MdMovie className="h-full w-full text-[#CA2E24]" />,
   mp3: <IoMdHeadset className="h-full w-full text-[#CA2E24]" />,
   pdf: <MdPictureAsPdf className="h-full w-full text-[#CA2E24]" />,
