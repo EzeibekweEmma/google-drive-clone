@@ -17,7 +17,7 @@ const fileUpload = (
         (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
       );
       // TODO: add progress bar
-      setProgress((prev: number[]) => [...prev, progress]);
+      setProgress((prev: number[]) => [...prev, { [file.name]: progress }]);
     },
     (error) => {
       alert(error);
