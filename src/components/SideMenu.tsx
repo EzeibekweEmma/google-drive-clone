@@ -28,7 +28,6 @@ function SideMenu() {
   // Add new file
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files || [];
-    console.log(files);
     for (let i = 0; i < files.length; i++) {
       const file = files?.[i];
       if (!file) return;
@@ -56,15 +55,15 @@ function SideMenu() {
   };
 
   return (
-    <section className="tablet:w-60 relative h-[90vh] w-16 space-y-4 duration-500">
+    <section className="relative h-[90vh] w-16 space-y-4 duration-500 tablet:w-60">
       <button
         onClick={() => setIsDropDown(true)}
-        className="tablet:px-5 tablet:py-4 mt-1 flex w-fit items-center
-      justify-center space-x-2 rounded-2xl bg-white p-3 text-textC
-      shadow-md shadow-[#ddd] duration-300 hover:bg-darkC2 hover:shadow-[#bbb]"
+        className="mt-1 flex w-fit items-center justify-center space-x-2
+      rounded-2xl bg-white p-3 text-textC shadow-md shadow-[#ddd]
+      duration-300 hover:bg-darkC2 hover:shadow-[#bbb] tablet:px-5 tablet:py-4"
       >
         <HiOutlinePlusSm className="h-6 w-6" />
-        <span className="tablet:block hidden text-sm font-medium">New</span>
+        <span className="hidden text-sm font-medium tablet:block">New</span>
       </button>
       {/* Add new file or folder drop down */}
       {isDropDown && (
