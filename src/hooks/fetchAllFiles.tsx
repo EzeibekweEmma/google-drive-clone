@@ -13,7 +13,11 @@ export const fetchAllFiles = (userEmail: string) => {
       onSnapshot(getUserFiles, (res) => {
         return setFileList(
           res.docs.map((doc) => {
-            const fileExtension = doc.data().fileName?.split(".").pop();
+            const fileExtension = doc
+              .data()
+              .fileName?.split(".")
+              .pop()
+              ?.toLowerCase();
             return {
               ...doc.data(),
               id: doc.id,

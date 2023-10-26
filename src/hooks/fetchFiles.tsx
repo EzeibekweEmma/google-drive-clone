@@ -15,7 +15,11 @@ export const fetchFiles = (folderId: string, userEmail: string) => {
           return setFileList(
             res.docs
               .map((doc) => {
-                const fileExtension = doc.data().fileName?.split(".").pop();
+                const fileExtension = doc
+                  .data()
+                  .fileName?.split(".")
+                  .pop()
+                  ?.toLowerCase();
                 return {
                   ...doc.data(),
                   id: doc.id,
@@ -37,7 +41,11 @@ export const fetchFiles = (folderId: string, userEmail: string) => {
           return setFileList(
             res.docs
               .map((doc) => {
-                const fileExtension = doc.data().fileName?.split(".").pop();
+                const fileExtension = doc
+                  .data()
+                  .fileName?.split(".")
+                  .pop()
+                  ?.toLowerCase();
                 return {
                   ...doc.data(),
                   id: doc.id,

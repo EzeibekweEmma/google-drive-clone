@@ -44,11 +44,11 @@ function ProgressIndicator({
     fileName.length > 0 && (
       <div className="absolute bottom-0 w-screen">
         <div
-          className={`absolute right-8 z-20 h-60 w-[23rem] overflow-x-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
+          className={`absolute right-8 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
             minimize ? "-bottom-4" : "-top-10"
           }`}
         >
-          <div className="flex items-center justify-between overflow-y-scroll bg-bgc py-2 pl-4 pr-2">
+          <div className="flex items-center justify-between bg-bgc py-2 pl-4 pr-2">
             {progress[0]! < 100 ? (
               <h3 className="flex items-center space-x-5 font-medium text-textC">
                 <span className="animate-pulse">Uploading file</span>
@@ -82,7 +82,9 @@ function ProgressIndicator({
             </div>
             {/* uploaded files progress */}
           </div>
-          <div className="flex flex-col">{fileNames}</div>
+          <div className="flex max-h-60 flex-col overflow-y-scroll">
+            {fileNames}
+          </div>
         </div>
       </div>
     )
