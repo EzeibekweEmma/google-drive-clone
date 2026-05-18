@@ -14,8 +14,8 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   const { data: session } = useSession();
 
-  let fileList = fetchFiles(folderId, session?.user.email!);
-  if (select) fileList = fetchAllFiles(session?.user.email!);
+  let fileList = fetchFiles(folderId, session?.user.id!);
+  if (select) fileList = fetchAllFiles(session?.user.id!);
 
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");

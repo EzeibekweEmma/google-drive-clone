@@ -23,7 +23,7 @@ function SideMenu() {
   const { Folder } = router.query;
 
   const { data: session } = useSession();
-  const userEmail = session?.user.email;
+  const userId = session?.user.id;
 
   // Add new file
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ function SideMenu() {
       const file = files?.[i];
       if (!file) return;
       setFileName((prev) => [...prev, file.name]);
-      fileUpload(file, setProgress, Folder?.[1] || "", userEmail!);
+      fileUpload(file, setProgress, Folder?.[1] || "", userId!);
     }
   };
   fileName.reverse();
@@ -47,7 +47,7 @@ function SideMenu() {
       isTrashed: false,
       FileList: [],
       folderId: Folder?.[1] || "",
-      userEmail,
+      userId,
     };
 
     addFolder(payload);

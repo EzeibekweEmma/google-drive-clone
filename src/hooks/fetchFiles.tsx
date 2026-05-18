@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 
 let files = collection(database, "files");
 
-export const fetchFiles = (folderId: string, userEmail: string) => {
+export const fetchFiles = (folderId: string, userId: string) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
   const getFolders = () => {
-    if (userEmail) {
-      const getUserFiles = query(files, where("userEmail", "==", userEmail));
+    if (userId) {
+      const getUserFiles = query(files, where("userId", "==", userId));
       if (!folderId) {
         onSnapshot(getUserFiles, (res) => {
           return setFileList(
@@ -68,7 +68,7 @@ export const fetchFiles = (folderId: string, userEmail: string) => {
 
   useEffect(() => {
     getFolders();
-  }, [folderId, userEmail]);
+  }, [folderId, userId]);
 
   return fileList;
 };

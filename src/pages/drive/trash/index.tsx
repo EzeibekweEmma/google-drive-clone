@@ -16,7 +16,7 @@ export default function Index() {
   const { data: session } = useSession();
 
   // Fetch the list of files and folders
-  const list = fetchFiles("", session?.user.email!);
+  const list = fetchFiles("", session?.user.id!);
 
   useEffect(() => {
     // Determine if there are folders and files in the list

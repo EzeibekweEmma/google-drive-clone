@@ -38,6 +38,13 @@ To run the project locally, follow these steps:
 
 The application should now be running on your local environment. You can access it at [http://localhost:3000](http://localhost:3000).
 
+### Security Notes
+
+- Firebase web config now lives in `NEXT_PUBLIC_FIREBASE_*` env vars instead of being hardcoded in source.
+- Uploaded files are stored under `files/{userId}/{randomId}-{originalName}` to reduce collisions and prevent cross-user path overlap.
+- Starter `firestore.rules` and `storage.rules` are included, but they require Firebase Authentication because they check `request.auth.uid`.
+- This project currently uses NextAuth for app sessions. To enforce Firebase rules in production, you still need to sign users into Firebase Auth or mint Firebase custom tokens from your server.
+
 ### Issues and Feedback
 
 If you encounter any issues with the application or have feedback to provide, please feel free to open an issue on the project's GitHub repository.

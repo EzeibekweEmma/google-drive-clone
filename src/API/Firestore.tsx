@@ -16,7 +16,7 @@ export const addFiles = (
   fileLink: string,
   fileName: string,
   folderId: string,
-  userEmail: string,
+  userId: string,
 ) => {
   try {
     addDoc(files, {
@@ -26,7 +26,7 @@ export const addFiles = (
       isStarred: false,
       isTrashed: false,
       folderId: folderId,
-      userEmail: userEmail,
+      userId: userId,
     });
   } catch (err) {
     console.error(err);

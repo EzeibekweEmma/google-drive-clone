@@ -51,11 +51,16 @@ interface FileListProps {
   isTrashed: boolean;
   fileExtension: string;
   folderId: string;
+  userId?: string;
 }
 interface payloadProps {
   folderName: string;
   isFolder: boolean;
   FileList: object;
+  isStarred?: boolean;
+  isTrashed?: boolean;
+  folderId?: string;
+  userId?: string;
 }
 
 interface FileDropDownProps {

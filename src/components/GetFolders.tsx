@@ -21,8 +21,8 @@ function GetFolders({
   const { data: session } = useSession();
 
   const router = useRouter();
-  let folderList = fetchFiles(folderId, session?.user.email!);
-  if (select) folderList = fetchAllFiles(session?.user.email!);
+  let folderList = fetchFiles(folderId, session?.user.id!);
+  if (select) folderList = fetchAllFiles(session?.user.id!);
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
