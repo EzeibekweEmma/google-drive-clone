@@ -18,9 +18,11 @@ export const addFiles = (
   folderId: string,
   userId: string,
   userEmail?: string,
+  publicId?: string,
+  resourceType?: string,
 ) => {
   try {
-    addDoc(files, {
+    return addDoc(files, {
       fileLink: fileLink,
       fileName: fileName,
       isFolder: false,
@@ -29,6 +31,8 @@ export const addFiles = (
       folderId: folderId,
       userId: userId,
       userEmail: userEmail ?? "",
+      publicId: publicId ?? "",
+      resourceType: resourceType ?? "raw",
     });
   } catch (err) {
     console.error(err);
@@ -83,9 +87,40 @@ export const trashFile = async (fileId: string, isTrashed: boolean) => {
   }
 };
 
-export const deleteFile = async (fileId: string, isFolder: boolean) => {
+const destroyCloudinaryAsset = async (
+  publicId?: string,
+  resourceType?: string,
+) => {
+  if (!publicId) return;
+
+  const response = await fetch("/api/cloudinary/destroy", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      publicId,
+      resourceType: resourceType ?? "raw",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to delete Cloudinary asset.");
+  }
+};
+
+export const deleteFile = async (
+  fileId: string,
+  isFolder: boolean,
+  publicId?: string,
+  resourceType?: string,
+) => {
   const fileRef = doc(files, fileId);
   try {
+    if (!isFolder) {
+      await destroyCloudinaryAsset(publicId, resourceType);
+    }
+
     // Delete the file or folder itself
     await deleteDoc(fileRef);
 
@@ -96,8 +131,16 @@ export const deleteFile = async (fileId: string, isFolder: boolean) => {
 
       const deletePromises: any[] = [];
 
-      querySnapshot.forEach((doc) => {
-        deletePromises.push(deleteDoc(doc.ref));
+      querySnapshot.forEach((snapshot) => {
+        const data = snapshot.data();
+
+        if (!data.isFolder && data.publicId) {
+          deletePromises.push(
+            destroyCloudinaryAsset(data.publicId as string, data.resourceType as string),
+          );
+        }
+
+        deletePromises.push(deleteDoc(snapshot.ref));
       });
 
       await Promise.all(deletePromises);

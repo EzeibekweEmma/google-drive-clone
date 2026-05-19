@@ -53,6 +53,8 @@ interface FileListProps {
   folderId: string;
   userId?: string;
   userEmail?: string;
+  publicId?: string;
+  resourceType?: string;
 }
 interface payloadProps {
   folderName: string;
@@ -76,6 +78,8 @@ interface FileDropDownProps {
     fileName: string;
     fileExtension: string;
     folderId: string;
+    publicId?: string;
+    resourceType?: string;
   };
   folderId: string;
   isFolderComp: boolean;
