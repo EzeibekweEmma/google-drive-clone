@@ -21,6 +21,7 @@ interface folderToggleProps {
 
 interface folderToggleAndUpload {
   uploadFile: Function;
+  uploadFolderFiles?: Function;
   setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDropDown: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -36,9 +37,15 @@ interface FileIcons {
 }
 
 interface ProgressIndicatorProps {
-  progress: number[];
-  fileName: string[];
-  setFileName: React.Dispatch<React.SetStateAction<string[]>>;
+  uploads: UploadItem[];
+  setUploads: React.Dispatch<React.SetStateAction<UploadItem[]>>;
+}
+
+interface UploadItem {
+  id: string;
+  name: string;
+  progress: number;
+  fileLink?: string;
 }
 
 interface FileListProps {
@@ -51,25 +58,27 @@ interface FileListProps {
   isTrashed: boolean;
   fileExtension: string;
   folderId: string;
+  userId?: string;
+  userEmail?: string;
+  publicId?: string;
+  resourceType?: string;
+  fileSize?: number;
+  isShared?: boolean;
+  shareToken?: string;
 }
 interface payloadProps {
   folderName: string;
   isFolder: boolean;
   FileList: object;
+  isStarred?: boolean;
+  isTrashed?: boolean;
+  folderId?: string;
+  userId?: string;
+  userEmail?: string;
 }
 
 interface FileDropDownProps {
-  file: {
-    folderName: string;
-    isFolder: boolean;
-    isStarred: boolean;
-    isTrashed: boolean;
-    id: string;
-    fileLink: string;
-    fileName: string;
-    fileExtension: string;
-    folderId: string;
-  };
+  file: FileListProps;
   folderId: string;
   isFolderComp: boolean;
   select: string;

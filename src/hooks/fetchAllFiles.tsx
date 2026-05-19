@@ -1,44 +1,53 @@
-import { onSnapshot, collection, query, where } from "firebase/firestore";
+import { onSnapshot, collection } from "firebase/firestore";
 import { database } from "@/firebaseConfig";
 import { useEffect, useState } from "react";
 
-let files = collection(database, "files");
+const files = collection(database, "files");
 
-export const fetchAllFiles = (userEmail: string) => {
+const matchesOwner = (
+  data: Record<string, unknown>,
+  userId: string,
+  userEmail?: string | null,
+) => {
+  return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
+};
+
+export const useFetchAllFiles = (userId?: string, userEmail?: string | null) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
-  const allFiles = () => {
-    if (userEmail) {
-      const getUserFiles = query(files, where("userEmail", "==", userEmail));
-      onSnapshot(getUserFiles, (res) => {
+  useEffect(() => {
+    if (userId) {
+      onSnapshot(files, (res) => {
         return setFileList(
-          res.docs.map((doc) => {
-            const fileExtension = doc
-              .data()
-              .fileName?.split(".")
-              .pop()
-              ?.toLowerCase();
-            return {
-              ...doc.data(),
-              id: doc.id,
-              fileName: doc.data().fileName,
-              fileExtension: fileExtension,
-              fileLink: doc.data().fileLink,
-              folderId: doc.data().folderId,
-              folderName: doc.data().folderName,
-              isFolder: doc.data().isFolder,
-              isStarred: doc.data().isStarred,
-              isTrashed: doc.data().isTrashed,
-            };
-          }),
+          res.docs
+            .map((doc) => {
+              const data = doc.data() as Record<string, unknown>;
+              const fileName = data.fileName as string | undefined;
+              const fileExtension = fileName
+                ?.split(".")
+                .pop()
+                ?.toLowerCase();
+              return {
+                ...data,
+                id: doc.id,
+                fileName: data.fileName,
+                fileExtension: fileExtension,
+                fileLink: data.fileLink,
+                folderId: data.folderId,
+                folderName: data.folderName,
+                isFolder: data.isFolder,
+                isStarred: data.isStarred,
+                isTrashed: data.isTrashed,
+                fileSize: data.fileSize,
+                isShared: data.isShared,
+                shareToken: data.shareToken,
+              };
+            })
+            .filter((file) => matchesOwner(file, userId, userEmail)) as FileListProps[],
         );
       });
     }
-  };
-
-  useEffect(() => {
-    allFiles();
-  }, [userEmail]);
+  }, [userEmail, userId]);
 
   return fileList;
 };

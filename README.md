@@ -1,78 +1,138 @@
 # ![Google Drive Clone](./public/logo.png) Google Drive Clone ![Google Drive Clone](./public/logo.png)
 
-This project aims to replicate the core functionalities of [Google Drive](https://drive.google.com/drive/my-drive), providing users with cloud storage and efficient file management capabilities. It was built using modern web technologies and tools for a responsive and user-friendly experience.
+A Google Drive-inspired file manager built with Next.js, NextAuth, Firebase, Prisma, and Cloudinary.
 
 ### Demo
 
 ![Desktop mode](./public/desktop.png)
 ![Desktop mode](./public/desktop2.png)
 ![Tablet mode](./public/tablet.png)
-![Mobile Mode](./public/mobile.png)
+![Mobile mode](./public/mobile.png)
 
 ### Features
 
-- **User Authentication**: The project employs NextAuth.js for user authentication, ensuring secure access to individual user accounts.
+- Google sign-in with NextAuth
+- File and folder creation, rename, move, copy, trash, and restore
+- Cloudinary-backed file uploads and delivery
+- Nested folders with breadcrumbs
+- Folder upload support
+- Storage usage tracking with a `200MB` per-user limit
+- Starred items and trash views
+- Public file sharing with `Only you` or `Anyone with the link`
+- Responsive UI for desktop and mobile
 
-- **File Upload and Management**: Users can easily upload files and manage them, making it an ideal solution for storing documents, media files, and more.
+### Tech Stack
 
-- **Search Functionality**: The project includes a powerful search feature that allows users to find files and folders quickly based on their names.
+**Next.js** | **TypeScript** | **React** | **Tailwind CSS** | **NextAuth.js** | **Prisma** | **Firebase** | **Cloudinary** | **Vercel** | **Google Cloud Platform**
 
-- **Folder Navigation**: Users can organize their files into folders and navigate through their directory structure efficiently.
+## Local Setup
 
-- **Responsive Design**: The user interface is designed to be responsive, adapting to various screen sizes and devices.
+1. Clone the repository.
+2. Install dependencies:
 
-### Technology Stack
+```bash
+npm install
+```
 
-**Next.js** | **TypeScript** | **Tailwind CSS** | **React** | **Vercel** | **Firebase** | **NextAuth.js**
+3. Copy `.env.example` to `.env`.
+4. Fill in the required environment variables.
+5. Push the Prisma schema:
 
-### How to Run
+```bash
+npx prisma db push
+```
 
-To run the project locally, follow these steps:
+6. Start the development server:
 
-1. Clone the repository to your local machine.
-2. Install the required dependencies using `npm install`.
-3. Create a Firebase project and configure it for this application.
-4. Set up authentication and real-time database in Firebase.
-5. Configure the environment variables in `.env` checkout [.env.example](./.env.example)
-6. Start the development server using `npm run dev`.
+```bash
+npm run dev
+```
 
-The application should now be running on your local environment. You can access it at [http://localhost:3000](http://localhost:3000).
+The app runs at [http://localhost:3000](http://localhost:3000).
 
-### Issues and Feedback
+## Environment Variables
 
-If you encounter any issues with the application or have feedback to provide, please feel free to open an issue on the project's GitHub repository.
+Use [`.env.example`](./.env.example) as the template.
 
-## Branches
+Required groups:
 
-- **dev** -> you can make your pull request to this branch
-- **main** -> don't touch this branch this is the production branch
+- `NEXTAUTH_SECRET`, 
+- `NEXTAUTH_URL`,
+- `GOOGLE_CLIENT_ID`, 
+- `GOOGLE_CLIENT_SECRET`,
+- `DATABASE_URL`
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
+- `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
+- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
 
-### Contributing
+## Architecture Notes
 
-Contributions are welcome! Please open an issue or submit a pull request.
+- Prisma + NextAuth handle user accounts and sessions.
+- Firestore stores file and folder metadata.
+- Cloudinary stores uploaded file assets.
+- New uploads go to `google-drive-clone/{userId}/...` in Cloudinary.
+- Public share links are backed by Firestore metadata and rendered through `/share/[token]`.
 
-## Contribution Guidelines
+## Deployment Notes
 
-1. Clone the repository and check out from `dev` branch.
-2. Open your terminal & set the origin branch to `dev` if not set already.
-3. Pull origin `git pull origin dev`
-4. Create a new branch for the task you were assigned to, eg : `git checkout -b feat-csv-parser`
-5. After making changes, do `git add .`
-6. Commit your changes with a descriptive commit message : `git commit -m "your commit message"`.
-7. To make sure there are no conflicts, run `git pull upstream dev`.
-8. Push changes to your new branch, run `git push -u origin feat-csv-parser`.
-9. Create a pull request to the `dev` branch not `main`.
-10. Ensure to describe your pull request.
+Before deploying:
 
-### License
+1. Set all environment variables in your hosting provider.
+2. Use a production-ready `DATABASE_URL`.
+   Local SQLite is fine for development, but a hosted database is recommended for production.
+3. Run:
 
-MIT
+```bash
+npx prisma db push
+```
 
-### Acknowledgements
+4. Verify your Google OAuth app includes the correct callback URL:
+   `/api/auth/callback/google`
+5. Make sure your Firebase Firestore project is created and reachable from the deployed app.
+6. Make sure Cloudinary credentials are valid and server-side secrets are not exposed as `NEXT_PUBLIC_*`.
 
-- Inspired by Google Drive.
-- [Next.js Documentation](https://nextjs.org/docs/getting-started)
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [NextAuth.js Documentation](https://next-auth.js.org/getting-started/introduction)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Vercel JS Documentation](https://vercel.com/docs)
+Build and start commands:
+
+```bash
+npm run build
+npm run start
+```
+
+If deploying on Vercel, set the same environment variables there before the first build.
+
+## Storage Notes
+
+- The web app enforces a `200MB` limit per user, mainly for testing purposes.
+- Firestore stores file size metadata used for quota checks.
+- Older records created before file size tracking may need backfilling if quota accuracy matters.
+
+## Sharing Notes
+
+- Public sharing is currently file-based.
+- Shared files can be opened through a public link.
+- Shared links do not show the authenticated Drive layout.
+
+## Contributing
+
+1. Create a branch from `dev`.
+2. Make your changes.
+3. Test locally.
+4. Open a pull request into `dev`.
+
+## License
+
+MIT License.
+
+## Acknowledgements
+- Inspired by Google Drive's core features and UI.
+- Built with the help of Next.js, Firebase, Prisma, and Cloudinary documentation.
+- This project is a personal learning exercise and is not affiliated with Google.
+- If you find any issues or have suggestions, please open an issue or submit a pull request!
+- Made with ❤️ by Ezeibekwe Emmanuel - [LinkedIn](https://www.linkedin.com/in/ezeibekweemma/)
+- Happy coding and stay productive!

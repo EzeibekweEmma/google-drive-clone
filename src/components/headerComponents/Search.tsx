@@ -1,4 +1,4 @@
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { useSession } from "next-auth/react";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
@@ -11,7 +11,7 @@ function Search() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { data: session } = useSession();
-  let list = fetchAllFiles(session?.user.email!);
+  const list = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
 
   const router = useRouter();
 
@@ -36,13 +36,14 @@ function Search() {
     // Create a list of search results.
     const icon =
       fileIcons[item.fileExtension as keyof typeof fileIcons] ??
-      fileIcons["any"];
+      fileIcons.any;
     return (
       <div
+        key={item.id}
         onClick={() => {
-          item.isFolder
+          void (item.isFolder
             ? router.push("/drive/folders/" + item.id)
-            : openFile(item.fileLink);
+            : openFile(item.fileLink));
         }}
         className="flex w-full cursor-pointer items-center space-x-3.5 border-blue-700 px-4 py-2 hover:border-l-2 hover:bg-darkC2"
       >
@@ -61,7 +62,7 @@ function Search() {
   });
 
   // Event handler for the onClick event on the document
-  const handleDocumentClick = (e: { target: any }) => {
+  const handleDocumentClick = (e: { target: EventTarget | null }) => {
     if (
       inputRef.current &&
       e.target &&

@@ -1,3 +1,4 @@
+import path from "node:path";
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -17,8 +18,20 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  turbopack: {
+    root: path.resolve("."),
+  },
   images: {
-    domains: ["firebasestorage.googleapis.com", "lh3.googleusercontent.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
 };
 
