@@ -78,6 +78,8 @@ interface FileDropDownProps {
     fileName: string;
     fileExtension: string;
     folderId: string;
+    userId?: string;
+    userEmail?: string;
     publicId?: string;
     resourceType?: string;
   };

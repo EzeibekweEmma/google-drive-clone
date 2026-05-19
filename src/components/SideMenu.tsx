@@ -6,9 +6,10 @@ import AddFolder from "./addBtnComponents/AddFolder";
 import Navbar from "./Navbar";
 import fileUpload from "@/API/FileUpload";
 import ProgressIndicator from "./ProgressIndicator";
-import { addFolder } from "@/API/Firestore";
+import { addFolder, replaceConflictingEntry, deleteFile } from "@/API/Firestore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
@@ -25,28 +26,70 @@ function SideMenu() {
   const { data: session } = useSession();
   const userId = session?.user.id;
   const userEmail = session?.user.email;
+  const allFiles = fetchAllFiles(userId!, userEmail);
 
   // Add new file
-  const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!userId) return;
 
     const files = e.target.files || [];
     for (let i = 0; i < files.length; i++) {
       const file = files?.[i];
       if (!file) return;
+
+      const conflict = allFiles.find(
+        (entry) =>
+          !entry.isFolder &&
+          entry.folderId === (Folder?.[1] || "") &&
+          entry.fileName === file.name,
+      );
+
+      if (conflict) {
+        const confirmed = window.confirm(
+          `"${file.name}" already exists here. Replace it?`,
+        );
+
+        if (!confirmed) continue;
+
+        await deleteFile(
+          conflict.id,
+          false,
+          conflict.publicId,
+          conflict.resourceType,
+        );
+      }
+
       setFileName((prev) => [...prev, file.name]);
-      fileUpload(file, setProgress, Folder?.[1] || "", userId, userEmail);
+      await fileUpload(file, setProgress, Folder?.[1] || "", userId, userEmail);
     }
   };
   fileName.reverse();
   progress.reverse();
 
   // Add new folder
-  const uploadFolder = () => {
+  const uploadFolder = async () => {
     if (!userId) return;
 
+    const nextFolderName = folderName === "" ? "Untitled folder" : folderName;
+    const conflict = allFiles.find(
+      (entry) =>
+        entry.isFolder &&
+        entry.folderId === (Folder?.[1] || "") &&
+        entry.folderName === nextFolderName,
+    );
+
+    if (conflict) {
+      const confirmed = window.confirm(
+        `"${nextFolderName}" already exists here. Replace it?`,
+      );
+
+      if (!confirmed) return;
+
+      await replaceConflictingEntry(conflict);
+    }
+
     let payload = {
-      folderName: folderName === "" ? "Untitled folder" : folderName,
+      folderName: nextFolderName,
       isFolder: true,
       isStarred: false,
       isTrashed: false,
@@ -56,7 +99,7 @@ function SideMenu() {
       userEmail: userEmail ?? "",
     };
 
-    addFolder(payload);
+    await addFolder(payload);
     setFolderName("");
   };
 

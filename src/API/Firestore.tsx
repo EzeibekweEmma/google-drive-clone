@@ -8,9 +8,60 @@ import {
   query,
   where,
   getDocs,
+  type QueryDocumentSnapshot,
+  type DocumentData,
 } from "firebase/firestore";
 
 let files = collection(database, "files");
+
+const matchesOwner = (
+  data: Record<string, unknown>,
+  userId: string,
+  userEmail?: string,
+) => {
+  return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
+};
+
+const getOwnedEntries = async (userId: string, userEmail?: string) => {
+  const snapshot = await getDocs(files);
+
+  return snapshot.docs.filter((entry) =>
+    matchesOwner(entry.data() as Record<string, unknown>, userId, userEmail),
+  );
+};
+
+const getEntryName = (
+  entry: QueryDocumentSnapshot<DocumentData> | FileListProps,
+  isFolder: boolean,
+) => {
+  const data = "data" in entry ? entry.data() : entry;
+  return isFolder ? (data.folderName as string) : (data.fileName as string);
+};
+
+const findConflictEntry = (
+  entries: Array<QueryDocumentSnapshot<DocumentData> | FileListProps>,
+  options: {
+    destinationId: string;
+    isFolder: boolean;
+    name: string;
+    userId: string;
+    userEmail?: string;
+    excludeId?: string;
+  },
+) => {
+  return entries.find((entry) => {
+    const data = "data" in entry ? entry.data() : entry;
+
+    return (
+      (data.userId === options.userId ||
+        (!!options.userEmail && data.userEmail === options.userEmail)) &&
+      data.folderId === options.destinationId &&
+      data.isFolder === options.isFolder &&
+      getEntryName(entry, options.isFolder) === options.name &&
+      ("id" in entry ? entry.id : entry.id) !== options.excludeId
+    );
+  });
+};
 
 export const addFiles = (
   fileLink: string,
@@ -41,7 +92,7 @@ export const addFiles = (
 
 export const addFolder = (payload: payloadProps) => {
   try {
-    addDoc(files, {
+    return addDoc(files, {
       ...payload,
     });
   } catch (err) {
@@ -109,6 +160,41 @@ const destroyCloudinaryAsset = async (
   }
 };
 
+const destroyAssetIfUnused = async (
+  publicId: string,
+  resourceType: string | undefined,
+  ignoreIds: Set<string>,
+) => {
+  const refs = await getDocs(query(files, where("publicId", "==", publicId)));
+  const activeRefs = refs.docs.filter((entry) => !ignoreIds.has(entry.id));
+
+  if (activeRefs.length === 0) {
+    await destroyCloudinaryAsset(publicId, resourceType);
+  }
+};
+
+const collectFolderDescendants = (
+  parentId: string,
+  entries: QueryDocumentSnapshot<DocumentData>[],
+) => {
+  const descendants: QueryDocumentSnapshot<DocumentData>[] = [];
+  const stack = [parentId];
+
+  while (stack.length > 0) {
+    const currentId = stack.pop();
+    const children = entries.filter((entry) => entry.data().folderId === currentId);
+
+    for (const child of children) {
+      descendants.push(child);
+      if (child.data().isFolder) {
+        stack.push(child.id);
+      }
+    }
+  }
+
+  return descendants;
+};
+
 export const deleteFile = async (
   fileId: string,
   isFolder: boolean,
@@ -117,35 +203,180 @@ export const deleteFile = async (
 ) => {
   const fileRef = doc(files, fileId);
   try {
-    if (!isFolder) {
-      await destroyCloudinaryAsset(publicId, resourceType);
+    const deleteTargets: QueryDocumentSnapshot<DocumentData>[] = [];
+
+    if (isFolder && fileId) {
+      const snapshot = await getDocs(files);
+      deleteTargets.push(...collectFolderDescendants(fileId, snapshot.docs));
+    }
+
+    const ignoreIds = new Set([fileId, ...deleteTargets.map((entry) => entry.id)]);
+
+    if (!isFolder && publicId) {
+      await destroyAssetIfUnused(publicId, resourceType, ignoreIds);
+    }
+
+    for (const snapshot of deleteTargets) {
+      const data = snapshot.data();
+      if (!data.isFolder && data.publicId) {
+        await destroyAssetIfUnused(
+          data.publicId as string,
+          data.resourceType as string,
+          ignoreIds,
+        );
+      }
     }
 
     // Delete the file or folder itself
     await deleteDoc(fileRef);
-
-    // If it's a folder, also delete all files with the same folderId
-    if (isFolder && fileId) {
-      const filesQuery = query(files, where("folderId", "==", fileId));
-      const querySnapshot = await getDocs(filesQuery);
-
-      const deletePromises: any[] = [];
-
-      querySnapshot.forEach((snapshot) => {
-        const data = snapshot.data();
-
-        if (!data.isFolder && data.publicId) {
-          deletePromises.push(
-            destroyCloudinaryAsset(data.publicId as string, data.resourceType as string),
-          );
-        }
-
-        deletePromises.push(deleteDoc(snapshot.ref));
-      });
-
-      await Promise.all(deletePromises);
-    }
+    await Promise.all(deleteTargets.map((entry) => deleteDoc(entry.ref)));
   } catch (error) {
     console.error("Error deleting file or folder: ", error);
   }
+};
+
+export const replaceConflictingEntry = async (
+  entry: FileListProps,
+) => {
+  if (!entry.id) return;
+
+  await deleteFile(entry.id, entry.isFolder, entry.publicId, entry.resourceType);
+};
+
+export const moveEntry = async (
+  entry: FileListProps,
+  destinationId: string,
+  userId: string,
+  userEmail?: string,
+) => {
+  const ownedEntries = await getOwnedEntries(userId, userEmail);
+  const name = entry.isFolder ? entry.folderName : entry.fileName;
+  const conflict = findConflictEntry(ownedEntries, {
+    destinationId,
+    isFolder: entry.isFolder,
+    name,
+    userId,
+    userEmail,
+    excludeId: entry.id,
+  });
+
+  if (conflict) {
+    const confirmed = window.confirm(
+      `"${name}" already exists in the destination. Replace it?`,
+    );
+
+    if (!confirmed) return;
+
+    await deleteFile(
+      conflict.id,
+      !!conflict.data().isFolder,
+      conflict.data().publicId as string | undefined,
+      conflict.data().resourceType as string | undefined,
+    );
+  }
+
+  await updateDoc(doc(files, entry.id), {
+    folderId: destinationId,
+    isTrashed: false,
+  });
+};
+
+const copyChildrenRecursively = async (
+  sourceId: string,
+  destinationId: string,
+  ownedEntries: QueryDocumentSnapshot<DocumentData>[],
+) => {
+  const children = ownedEntries.filter((entry) => entry.data().folderId === sourceId);
+
+  for (const child of children) {
+    const data = child.data();
+
+    if (data.isFolder) {
+      const newFolder = await addFolder({
+        folderName: data.folderName as string,
+        isFolder: true,
+        FileList: [],
+        isStarred: !!data.isStarred,
+        isTrashed: !!data.isTrashed,
+        folderId: destinationId,
+        userId: data.userId as string | undefined,
+        userEmail: data.userEmail as string | undefined,
+      });
+
+      if (newFolder) {
+        await copyChildrenRecursively(child.id, newFolder.id, ownedEntries);
+      }
+    } else {
+      await addFiles(
+        data.fileLink as string,
+        data.fileName as string,
+        destinationId,
+        data.userId as string,
+        data.userEmail as string | undefined,
+        data.publicId as string | undefined,
+        data.resourceType as string | undefined,
+      );
+    }
+  }
+};
+
+export const copyEntry = async (
+  entry: FileListProps,
+  destinationId: string,
+  userId: string,
+  userEmail?: string,
+) => {
+  const ownedEntries = await getOwnedEntries(userId, userEmail);
+  const name = entry.isFolder ? entry.folderName : entry.fileName;
+  const conflict = findConflictEntry(ownedEntries, {
+    destinationId,
+    isFolder: entry.isFolder,
+    name,
+    userId,
+    userEmail,
+  });
+
+  if (conflict) {
+    const confirmed = window.confirm(
+      `"${name}" already exists in the destination. Replace it?`,
+    );
+
+    if (!confirmed) return;
+
+    await deleteFile(
+      conflict.id,
+      !!conflict.data().isFolder,
+      conflict.data().publicId as string | undefined,
+      conflict.data().resourceType as string | undefined,
+    );
+  }
+
+  if (entry.isFolder) {
+    const newFolder = await addFolder({
+      folderName: entry.folderName,
+      isFolder: true,
+      FileList: [],
+      isStarred: entry.isStarred,
+      isTrashed: false,
+      folderId: destinationId,
+      userId,
+      userEmail: userEmail ?? "",
+    });
+
+    if (newFolder) {
+      await copyChildrenRecursively(entry.id, newFolder.id, ownedEntries);
+    }
+
+    return;
+  }
+
+  await addFiles(
+    entry.fileLink,
+    entry.fileName,
+    destinationId,
+    userId,
+    userEmail,
+    entry.publicId,
+    entry.resourceType,
+  );
 };
