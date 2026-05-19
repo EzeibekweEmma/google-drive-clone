@@ -72,7 +72,7 @@ function Folder() {
   return (
     <>
       <Head>
-        <title>{headerName} - Google Drive</title>
+        <title>{`${headerName} - Google Drive`}</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -23,7 +23,7 @@ This project aims to replicate the core functionalities of [Google Drive](https:
 
 ### Technology Stack
 
-**Next.js** | **TypeScript** | **Tailwind CSS** | **React** | **Vercel** | **Firebase** | **NextAuth.js**
+**Next.js** | **TypeScript** | **Tailwind CSS** | **React** | **Vercel** | **Firebase Firestore** | **Cloudinary** | **NextAuth.js**
 
 ### How to Run
 
@@ -31,19 +31,19 @@ To run the project locally, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Install the required dependencies using `npm install`.
-3. Create a Firebase project and configure it for this application.
-4. Set up authentication and real-time database in Firebase.
-5. Configure the environment variables in `.env` checkout [.env.example](./.env.example)
+3. Create a Firebase project and enable Firestore for file metadata.
+4. Create a Cloudinary account for file uploads and delivery.
+5. Configure the environment variables in `.env` using [.env.example](./.env.example)
 6. Start the development server using `npm run dev`.
 
 The application should now be running on your local environment. You can access it at [http://localhost:3000](http://localhost:3000).
 
-### Security Notes
+### Storage Notes
 
-- Firebase web config now lives in `NEXT_PUBLIC_FIREBASE_*` env vars instead of being hardcoded in source.
-- Uploaded files are stored under `files/{userId}/{randomId}-{originalName}` to reduce collisions and prevent cross-user path overlap.
-- Starter `firestore.rules` and `storage.rules` are included, but they require Firebase Authentication because they check `request.auth.uid`.
-- This project currently uses NextAuth for app sessions. To enforce Firebase rules in production, you still need to sign users into Firebase Auth or mint Firebase custom tokens from your server.
+- Firebase is used for Firestore metadata only.
+- Cloudinary is used for file uploads and delivery.
+- New uploads are stored under `google-drive-clone/{userId}/...` in Cloudinary.
+- `CLOUDINARY_API_SECRET` must stay server-side only.
 
 ### Issues and Feedback
 
@@ -80,6 +80,7 @@ MIT
 - Inspired by Google Drive.
 - [Next.js Documentation](https://nextjs.org/docs/getting-started)
 - [Firebase Documentation](https://firebase.google.com/docs)
+- [Cloudinary Documentation](https://cloudinary.com/documentation)
 - [NextAuth.js Documentation](https://next-auth.js.org/getting-started/introduction)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Vercel JS Documentation](https://vercel.com/docs)

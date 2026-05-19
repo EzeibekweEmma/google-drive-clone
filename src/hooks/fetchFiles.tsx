@@ -1,4 +1,4 @@
-import { onSnapshot, collection, query, where } from "firebase/firestore";
+import { onSnapshot, collection } from "firebase/firestore";
 import { database } from "@/firebaseConfig";
 import { useEffect, useState } from "react";
 
@@ -21,9 +21,8 @@ export const fetchFiles = (
 
   const getFolders = () => {
     if (userId) {
-      const getUserFiles = query(files, where("userId", "!=", null));
       if (!folderId) {
-        onSnapshot(getUserFiles, (res) => {
+        onSnapshot(files, (res) => {
           return setFileList(
             res.docs
               .map((doc) => {
@@ -51,7 +50,7 @@ export const fetchFiles = (
           );
         });
       } else {
-        onSnapshot(getUserFiles, (res) => {
+        onSnapshot(files, (res) => {
           return setFileList(
             res.docs
               .map((doc) => {

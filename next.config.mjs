@@ -18,11 +18,7 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: [
-      "firebasestorage.googleapis.com",
-      "lh3.googleusercontent.com",
-      "res.cloudinary.com",
-    ],
+    domains: ["lh3.googleusercontent.com", "res.cloudinary.com"],
   },
 };
 

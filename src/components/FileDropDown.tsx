@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { TbDownload } from "react-icons/tb";
-import { deleteFile, renameFile, starFile, trashFile } from "@/API/Firestore";
+import { deleteFile, starFile, trashFile } from "@/API/Firestore";
 import { useRouter } from "next/router";
 
 function FileDropDown({
