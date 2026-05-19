@@ -82,7 +82,9 @@ const fileUpload = (
 
           setUploads((prev) =>
             prev.map((upload) =>
-              upload.id === uploadId ? { ...upload, progress: 100 } : upload,
+              upload.id === uploadId
+                ? { ...upload, progress: 100, fileLink: result.secure_url }
+                : upload,
             ),
           );
 

@@ -45,6 +45,7 @@ interface UploadItem {
   id: string;
   name: string;
   progress: number;
+  fileLink?: string;
 }
 
 interface FileListProps {

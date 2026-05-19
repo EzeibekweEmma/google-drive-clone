@@ -19,10 +19,17 @@ function ProgressIndicator({
   // show all file name and progress
   const fileNames = uploads.map((upload) => {
     const fileExtension = upload.name.split(".").pop();
+    const isReady = upload.progress >= 100 && Boolean(upload.fileLink);
     return (
       <div
         key={upload.id}
-        className="flex cursor-pointer items-center justify-between bg-white py-2.5 pl-4 pr-2 hover:bg-darkC"
+        onClick={() => {
+          if (!isReady || !upload.fileLink) return;
+          window.open(upload.fileLink, "_blank", "noopener,noreferrer");
+        }}
+        className={`flex items-center justify-between bg-white py-2.5 pl-4 pr-2 ${
+          isReady ? "cursor-pointer hover:bg-darkC" : "cursor-default"
+        }`}
       >
         <div className="flex items-center space-x-3">
           {fileExtension && fileIcons[fileExtension] ? (
@@ -45,7 +52,7 @@ function ProgressIndicator({
     uploads.length > 0 && (
       <div className="absolute bottom-0 w-screen">
         <div
-          className={`absolute right-8 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
+          className={`absolute right-8 z-20 w-[23rem] pb-4 overflow-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
             minimize ? "-bottom-4" : "-top-10"
           }`}
         >
