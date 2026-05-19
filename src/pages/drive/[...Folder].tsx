@@ -26,9 +26,9 @@ function Folder() {
   const list = fetchFiles(
     currentFolderId,
     session?.user.id!,
-    session?.user.email,
+    session?.user.email!,
   );
-  const allFiles = fetchAllFiles(session?.user.id!, session?.user.email);
+  const allFiles = fetchAllFiles(session?.user.id!, session?.user.email ?? undefined);
   const currentFolder = allFiles.find(
     (item) => item.id === currentFolderId && item.isFolder,
   );

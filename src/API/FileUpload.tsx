@@ -6,6 +6,7 @@ const fileUpload = (
   parentId: string,
   userId: string,
   userEmail?: string,
+  fileNameOverride?: string,
 ) => {
   const upload = async () => {
     const folder = `google-drive-clone/${userId}`;
@@ -63,12 +64,13 @@ const fileUpload = (
 
         await addFiles(
           result.secure_url,
-          file.name,
+          fileNameOverride ?? file.name,
           parentId,
           userId,
           userEmail,
           result.public_id,
           result.resource_type,
+          Number(file.size ?? 0),
         );
 
         resolve();

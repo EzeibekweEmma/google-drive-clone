@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 
 let files = collection(database, "files");
+export const USER_STORAGE_LIMIT_BYTES = 200 * 1024 * 1024;
 
 const matchesOwner = (
   data: Record<string, unknown>,
@@ -51,6 +52,7 @@ const findConflictEntry = (
 ) => {
   return entries.find((entry) => {
     const data = "data" in entry ? entry.data() : entry;
+    const entryId = "data" in entry ? entry.id : (entry as FileListProps).id;
 
     return (
       (data.userId === options.userId ||
@@ -58,7 +60,7 @@ const findConflictEntry = (
       data.folderId === options.destinationId &&
       data.isFolder === options.isFolder &&
       getEntryName(entry, options.isFolder) === options.name &&
-      ("id" in entry ? entry.id : entry.id) !== options.excludeId
+      entryId !== options.excludeId
     );
   });
 };
@@ -71,6 +73,7 @@ export const addFiles = (
   userEmail?: string,
   publicId?: string,
   resourceType?: string,
+  fileSize?: number,
 ) => {
   try {
     return addDoc(files, {
@@ -84,6 +87,7 @@ export const addFiles = (
       userEmail: userEmail ?? "",
       publicId: publicId ?? "",
       resourceType: resourceType ?? "raw",
+      fileSize: fileSize ?? 0,
     });
   } catch (err) {
     console.error(err);
@@ -131,11 +135,12 @@ export const renameFile = async (
 
       if (!confirmed) return false;
 
+      const conflictData = "data" in conflict ? conflict.data() : conflict;
       await deleteFile(
         conflict.id,
-        !!conflict.data().isFolder,
-        conflict.data().publicId as string | undefined,
-        conflict.data().resourceType as string | undefined,
+        !!conflictData.isFolder,
+        conflictData.publicId as string | undefined,
+        conflictData.resourceType as string | undefined,
       );
     }
 
@@ -229,6 +234,16 @@ const collectFolderDescendants = (
   return descendants;
 };
 
+export const getUserUsageBytes = async (userId: string, userEmail?: string) => {
+  const ownedEntries = await getOwnedEntries(userId, userEmail);
+
+  return ownedEntries.reduce((total, entry) => {
+    const data = entry.data();
+    if (data.isFolder) return total;
+    return total + Number(data.fileSize ?? 0);
+  }, 0);
+};
+
 export const deleteFile = async (
   fileId: string,
   isFolder: boolean,
@@ -301,11 +316,12 @@ export const moveEntry = async (
 
     if (!confirmed) return;
 
+    const conflictData = "data" in conflict ? conflict.data() : conflict;
     await deleteFile(
       conflict.id,
-      !!conflict.data().isFolder,
-      conflict.data().publicId as string | undefined,
-      conflict.data().resourceType as string | undefined,
+      !!conflictData.isFolder,
+      conflictData.publicId as string | undefined,
+      conflictData.resourceType as string | undefined,
     );
   }
 
@@ -349,9 +365,24 @@ const copyChildrenRecursively = async (
         data.userEmail as string | undefined,
         data.publicId as string | undefined,
         data.resourceType as string | undefined,
+        Number(data.fileSize ?? 0),
       );
     }
   }
+};
+
+const getEntrySizeForCopy = (
+  entry: FileListProps,
+  ownedEntries: QueryDocumentSnapshot<DocumentData>[],
+) => {
+  if (!entry.isFolder) return Number(entry.fileSize ?? 0);
+
+  const descendants = collectFolderDescendants(entry.id, ownedEntries);
+  return descendants.reduce((total, child) => {
+    const data = child.data();
+    if (data.isFolder) return total;
+    return total + Number(data.fileSize ?? 0);
+  }, 0);
 };
 
 export const copyEntry = async (
@@ -361,6 +392,14 @@ export const copyEntry = async (
   userEmail?: string,
 ) => {
   const ownedEntries = await getOwnedEntries(userId, userEmail);
+  const currentUsage = await getUserUsageBytes(userId, userEmail);
+  const copySize = getEntrySizeForCopy(entry, ownedEntries);
+
+  if (currentUsage + copySize > USER_STORAGE_LIMIT_BYTES) {
+    window.alert("This copy would exceed your 500MB storage limit.");
+    return;
+  }
+
   const name = entry.isFolder ? entry.folderName : entry.fileName;
   const conflict = findConflictEntry(ownedEntries, {
     destinationId,
@@ -377,11 +416,12 @@ export const copyEntry = async (
 
     if (!confirmed) return;
 
+    const conflictData = "data" in conflict ? conflict.data() : conflict;
     await deleteFile(
       conflict.id,
-      !!conflict.data().isFolder,
-      conflict.data().publicId as string | undefined,
-      conflict.data().resourceType as string | undefined,
+      !!conflictData.isFolder,
+      conflictData.publicId as string | undefined,
+      conflictData.resourceType as string | undefined,
     );
   }
 
@@ -412,5 +452,6 @@ export const copyEntry = async (
     userEmail,
     entry.publicId,
     entry.resourceType,
+    Number(entry.fileSize ?? 0),
   );
 };

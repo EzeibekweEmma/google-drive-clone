@@ -43,6 +43,7 @@ export const fetchFiles = (
                   isFolder: data.isFolder,
                   isStarred: data.isStarred,
                   isTrashed: data.isTrashed,
+                  fileSize: data.fileSize,
                 };
               })
               .filter((file) => matchesOwner(file, userId, userEmail))
@@ -71,6 +72,7 @@ export const fetchFiles = (
                   isFolder: data.isFolder,
                   isStarred: data.isStarred,
                   isTrashed: data.isTrashed,
+                  fileSize: data.fileSize,
                 };
               })
               .filter((file) => matchesOwner(file, userId, userEmail))

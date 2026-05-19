@@ -38,6 +38,7 @@ export const fetchAllFiles = (userId: string, userEmail?: string) => {
                 isFolder: data.isFolder,
                 isStarred: data.isStarred,
                 isTrashed: data.isTrashed,
+                fileSize: data.fileSize,
               };
             })
             .filter((file) => matchesOwner(file, userId, userEmail)),

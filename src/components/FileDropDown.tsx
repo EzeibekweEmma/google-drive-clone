@@ -33,12 +33,35 @@ function FileDropDown({
     window.open(fileLink, "_blank");
   };
 
+  const downloadFile = async (fileLink: string, downloadName: string) => {
+    try {
+      const response = await fetch(fileLink);
+      if (!response.ok) {
+        throw new Error("Unable to download file.");
+      }
+
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = downloadName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      window.alert(
+        error instanceof Error ? error.message : "Unable to download file.",
+      );
+    }
+  };
+
   return (
     <>
       <section
         onClick={(event) => event.stopPropagation()}
         className={`absolute top-9 z-10 ${
-          select == "trashed" ? "h-fit" : "max-h-72"
+          select == "trashed" ? "h-fit" : "h-52"
         } w-52 overflow-y-auto rounded-md border bg-white shadow-sm shadow-[#777]`}
       >
         {select !== "trashed" ? (
@@ -56,15 +79,17 @@ function FileDropDown({
               <span className="text-sm">Open File</span>
             </div>
             {!isFolderComp && (
-              <a
-                href={file.fileLink}
-                download={file.fileName}
-                onClick={closeMenu}
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  void downloadFile(file.fileLink, file.fileName);
+                }}
                 className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
               >
                 <TbDownload className="h-5 w-5" />
                 <span className="text-sm">Download</span>
-              </a>
+              </button>
             )}
 
             <div
@@ -160,12 +185,12 @@ function FileDropDown({
                 file,
                 destinationId,
                 session.user.id,
-                session.user.email,
+                session.user.email ?? undefined,
               );
               return;
             }
 
-            await copyEntry(file, destinationId, session.user.id, session.user.email);
+            await copyEntry(file, destinationId, session.user.id, session.user.email ?? undefined);
           }}
         />
       )}

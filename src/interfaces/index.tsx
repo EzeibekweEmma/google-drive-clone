@@ -21,6 +21,7 @@ interface folderToggleProps {
 
 interface folderToggleAndUpload {
   uploadFile: Function;
+  uploadFolderFiles?: Function;
   setFolderToggle: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDropDown: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -55,6 +56,7 @@ interface FileListProps {
   userEmail?: string;
   publicId?: string;
   resourceType?: string;
+  fileSize?: number;
 }
 interface payloadProps {
   folderName: string;
@@ -82,6 +84,7 @@ interface FileDropDownProps {
     userEmail?: string;
     publicId?: string;
     resourceType?: string;
+    fileSize?: number;
   };
   folderId: string;
   isFolderComp: boolean;
