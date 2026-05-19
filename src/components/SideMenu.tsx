@@ -68,7 +68,7 @@ function SideMenu() {
 
   // Add new folder
   const uploadFolder = async () => {
-    if (!userId) return;
+    if (!userId) return false;
 
     const nextFolderName = folderName === "" ? "Untitled folder" : folderName;
     const conflict = allFiles.find(
@@ -83,7 +83,7 @@ function SideMenu() {
         `"${nextFolderName}" already exists here. Replace it?`,
       );
 
-      if (!confirmed) return;
+      if (!confirmed) return false;
 
       await replaceConflictingEntry(conflict);
     }
@@ -101,6 +101,7 @@ function SideMenu() {
 
     await addFolder(payload);
     setFolderName("");
+    return true;
   };
 
   return (

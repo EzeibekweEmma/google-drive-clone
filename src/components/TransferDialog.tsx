@@ -66,15 +66,18 @@ function TransferDialog({
 
   const submit = async () => {
     setIsSubmitting(true);
-    await onConfirm(destinationId);
-    setIsSubmitting(false);
-    onClose();
+    try {
+      await onConfirm(destinationId);
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div
       onClick={onClose}
-      className="absolute inset-0 z-20 flex items-center justify-center bg-darkC2/40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-darkC2/40"
     >
       <div
         onClick={(event) => event.stopPropagation()}

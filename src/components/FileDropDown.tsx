@@ -26,6 +26,7 @@ function FileDropDown({
   const router = useRouter();
   const { data: session } = useSession();
   const [transferMode, setTransferMode] = React.useState<"move" | "copy" | "">("");
+  const closeMenu = () => setOpenMenu("");
 
   const openFile = (fileLink: string) => {
     // Open the file in a new tab
@@ -35,19 +36,20 @@ function FileDropDown({
   return (
     <>
       <section
-        onClick={() => setOpenMenu("")}
+        onClick={(event) => event.stopPropagation()}
         className={`absolute top-9 z-10 ${
-          select == "trashed" ? "h-fit" : "h-56"
-        } w-48 overflow-y-scroll rounded-md border bg-white shadow-sm shadow-[#777]`}
+          select == "trashed" ? "h-fit" : "max-h-72"
+        } w-52 overflow-y-auto rounded-md border bg-white shadow-sm shadow-[#777]`}
       >
         {select !== "trashed" ? (
           <>
             <div
-              onClick={() =>
+              onClick={() => {
+                closeMenu();
                 isFolderComp
                   ? router.push("/drive/folders/" + folderId)
-                  : openFile(file.fileLink)
-              }
+                  : openFile(file.fileLink);
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <HiOutlineArrowsExpand className="h-5 w-5" />
@@ -57,6 +59,7 @@ function FileDropDown({
               <a
                 href={file.fileLink}
                 download={file.fileName}
+                onClick={closeMenu}
                 className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
               >
                 <TbDownload className="h-5 w-5" />
@@ -65,14 +68,20 @@ function FileDropDown({
             )}
 
             <div
-              onClick={() => setRenameToggle(file.id)}
+              onClick={() => {
+                closeMenu();
+                setRenameToggle(file.id);
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <MdDriveFileRenameOutline className="h-5 w-5" />
               <span className="text-sm">Rename</span>
             </div>
             <div
-              onClick={() => starFile(file.id, !file.isStarred)}
+              onClick={() => {
+                closeMenu();
+                void starFile(file.id, !file.isStarred);
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               {!file.isStarred ? (
@@ -97,7 +106,10 @@ function FileDropDown({
               <span className="text-sm">Make a copy to</span>
             </div>
             <div
-              onClick={() => trashFile(file.id, true)}
+              onClick={() => {
+                closeMenu();
+                void trashFile(file.id, true);
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <RiDeleteBin6Line className="h-5 w-5" />
@@ -107,16 +119,25 @@ function FileDropDown({
         ) : (
           <>
             <div
-              onClick={() => trashFile(file.id, false)}
+              onClick={() => {
+                closeMenu();
+                void trashFile(file.id, false);
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <MdOutlineRestore className="h-5 w-5" />
               <span className="text-sm">Restore</span>
             </div>
             <div
-              onClick={() =>
-                deleteFile(file.id, file.isFolder, file.publicId, file.resourceType)
-              }
+              onClick={() => {
+                closeMenu();
+                void deleteFile(
+                  file.id,
+                  file.isFolder,
+                  file.publicId,
+                  file.resourceType,
+                );
+              }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
             >
               <RiDeleteBin6Line className="h-5 w-5" />
@@ -129,7 +150,10 @@ function FileDropDown({
         <TransferDialog
           item={file}
           mode={transferMode}
-          onClose={() => setTransferMode("")}
+          onClose={() => {
+            setTransferMode("");
+            closeMenu();
+          }}
           onConfirm={async (destinationId) => {
             if (transferMode === "move") {
               await moveEntry(

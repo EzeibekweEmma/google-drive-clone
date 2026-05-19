@@ -29,7 +29,30 @@ function GetFolders({
     // Toggle the dropdown for the given file
     setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
+    window.dispatchEvent(
+      new CustomEvent("drive-menu-open", {
+        detail: { fileId, source: "folders" },
+      }),
+    );
   };
+
+  React.useEffect(() => {
+    const handleCloseOtherMenus = (event: Event) => {
+      const customEvent = event as CustomEvent<{ fileId: string; source: string }>;
+      if (customEvent.detail?.source !== "folders") {
+        setOpenMenu("");
+        setRenameToggle("");
+      }
+    };
+
+    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
+    return () => {
+      window.removeEventListener(
+        "drive-menu-open",
+        handleCloseOtherMenus as EventListener,
+      );
+    };
+  }, []);
 
   const folders = folderList.map((folder) => {
     // set a condition for the folders to be displayed
@@ -55,7 +78,10 @@ function GetFolders({
             </span>
           </div>
           <BsThreeDotsVertical
-            onClick={() => handleMenuToggle(folder.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleMenuToggle(folder.id);
+            }}
             className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
           />
           {

@@ -25,7 +25,30 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     // Toggle the dropdown for the given file
     setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
+    window.dispatchEvent(
+      new CustomEvent("drive-menu-open", {
+        detail: { fileId, source: "files" },
+      }),
+    );
   };
+
+  React.useEffect(() => {
+    const handleCloseOtherMenus = (event: Event) => {
+      const customEvent = event as CustomEvent<{ fileId: string; source: string }>;
+      if (customEvent.detail?.source !== "files") {
+        setOpenMenu("");
+        setRenameToggle("");
+      }
+    };
+
+    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
+    return () => {
+      window.removeEventListener(
+        "drive-menu-open",
+        handleCloseOtherMenus as EventListener,
+      );
+    };
+  }, []);
 
   const list = fileList.map((file) => {
     // getting the icon for the file
@@ -77,7 +100,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
         >
           <div
             className="flex w-full flex-col items-center justify-center
-         overflow-hidden rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
+         overflow-visible rounded-xl bg-darkC2 px-2.5 hover:bg-darkC"
           >
             <div className="relative flex w-full items-center justify-between px-1 py-3">
               <div className="flex items-center space-x-4">
@@ -87,7 +110,10 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                 </span>
               </div>
               <BsThreeDotsVertical
-                onClick={() => handleMenuToggle(file.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleMenuToggle(file.id);
+                }}
                 className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
               />
               {

@@ -6,9 +6,11 @@ function AddFolder({
   setFolderName,
   uploadFolder,
 }: folderToggleProps) {
-  const addFolder = () => {
-    uploadFolder();
-    setFolderToggle(false);
+  const addFolder = async () => {
+    const created = await uploadFolder();
+    if (created) {
+      setFolderToggle(false);
+    }
   };
 
   return (
@@ -40,7 +42,7 @@ function AddFolder({
             Cancel
           </button>
           <button
-            onClick={() => addFolder()}
+            onClick={() => void addFolder()}
             className="rounded-full px-3 py-2 hover:bg-darkC2"
           >
             Create

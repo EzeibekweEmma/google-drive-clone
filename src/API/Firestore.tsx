@@ -104,14 +104,48 @@ export const renameFile = async (
   fileId: string,
   newName: string,
   isFolder: boolean,
+  userId: string,
+  userEmail?: string,
 ) => {
   const fileRef = doc(files, fileId);
   try {
+    const ownedEntries = await getOwnedEntries(userId, userEmail);
+    const currentEntry = ownedEntries.find((entry) => entry.id === fileId);
+
+    if (!currentEntry) return false;
+
+    const currentData = currentEntry.data();
+    const conflict = findConflictEntry(ownedEntries, {
+      destinationId: (currentData.folderId as string) ?? "",
+      isFolder,
+      name: newName,
+      userId,
+      userEmail,
+      excludeId: fileId,
+    });
+
+    if (conflict) {
+      const confirmed = window.confirm(
+        `"${newName}" already exists here. Replace it?`,
+      );
+
+      if (!confirmed) return false;
+
+      await deleteFile(
+        conflict.id,
+        !!conflict.data().isFolder,
+        conflict.data().publicId as string | undefined,
+        conflict.data().resourceType as string | undefined,
+      );
+    }
+
     await updateDoc(fileRef, {
       [isFolder ? "folderName" : "fileName"]: newName,
     });
+    return true;
   } catch (error) {
     console.error("Error updating file properties: ", error);
+    return false;
   }
 };
 
