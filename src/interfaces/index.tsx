@@ -37,9 +37,14 @@ interface FileIcons {
 }
 
 interface ProgressIndicatorProps {
-  progress: number[];
-  fileName: string[];
-  setFileName: React.Dispatch<React.SetStateAction<string[]>>;
+  uploads: UploadItem[];
+  setUploads: React.Dispatch<React.SetStateAction<UploadItem[]>>;
+}
+
+interface UploadItem {
+  id: string;
+  name: string;
+  progress: number;
 }
 
 interface FileListProps {

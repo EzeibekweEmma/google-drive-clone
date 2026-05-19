@@ -9,18 +9,19 @@ import {
 import fileIcons from "./fileIcons";
 
 function ProgressIndicator({
-  progress,
-  fileName,
-  setFileName,
+  uploads,
+  setUploads,
 }: ProgressIndicatorProps) {
   const [minimize, setMinimize] = useState(true);
+  const activeUploads = uploads.filter((upload) => upload.progress < 100);
+  const isUploading = activeUploads.length > 0;
 
   // show all file name and progress
-  const fileNames = fileName?.map((name, index) => {
-    const fileExtension = name.split(".").pop();
+  const fileNames = uploads.map((upload) => {
+    const fileExtension = upload.name.split(".").pop();
     return (
       <div
-        key={index}
+        key={upload.id}
         className="flex cursor-pointer items-center justify-between bg-white py-2.5 pl-4 pr-2 hover:bg-darkC"
       >
         <div className="flex items-center space-x-3">
@@ -29,10 +30,10 @@ function ProgressIndicator({
           ) : (
             <div className="h-6 w-6">{fileIcons["any"]}</div>
           )}
-          <span className="w-60 truncate">{name}</span>
+          <span className="w-60 truncate">{upload.name}</span>
         </div>
-        {progress[index]! < 100 ? (
-          <span className="pr-2">{progress[index]}%</span>
+        {upload.progress < 100 ? (
+          <span className="pr-2">{upload.progress}%</span>
         ) : (
           <IoMdCheckmarkCircle className="h-9 w-9 p-1.5 pr-2 text-green-600" />
         )}
@@ -41,7 +42,7 @@ function ProgressIndicator({
   });
 
   return (
-    fileName.length > 0 && (
+    uploads.length > 0 && (
       <div className="absolute bottom-0 w-screen">
         <div
           className={`absolute right-8 z-20 w-[23rem] overflow-hidden rounded-t-2xl shadow-sm shadow-textC tablet:right-10 ${
@@ -49,14 +50,16 @@ function ProgressIndicator({
           }`}
         >
           <div className="flex items-center justify-between bg-bgc py-2 pl-4 pr-2">
-            {progress[0]! < 100 ? (
+            {isUploading ? (
               <h3 className="flex items-center space-x-5 font-medium text-textC">
-                <span className="animate-pulse">Uploading file</span>
+                <span className="animate-pulse">
+                  Uploading {activeUploads.length} file{activeUploads.length > 1 && "s"}
+                </span>
                 <AiOutlineLoading3Quarters className="animate-spin text-green-600" />
               </h3>
             ) : (
               <h3 className="font-medium text-textC">
-                {fileName.length} upload{fileName.length > 1 && "s"} complete
+                {uploads.length} upload{uploads.length > 1 && "s"} complete
               </h3>
             )}
             <div className="flex items-center">
@@ -76,7 +79,7 @@ function ProgressIndicator({
                 )}
               </div>
               <AiOutlineClose
-                onClick={() => setFileName([])}
+                onClick={() => setUploads([])}
                 className="h-9 w-9 cursor-pointer rounded-full p-2 hover:bg-darkC"
               />
             </div>

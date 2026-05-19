@@ -18,10 +18,7 @@ import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
-  // TODO: change uploadStatus to progress
-  // const [uploadStatus, setUploadStatus] = useState([]);
-  const [progress, setProgress] = useState([]);
-  const [fileName, setFileName] = useState<string[]>([]);
+  const [uploads, setUploads] = useState<UploadItem[]>([]);
   const [folderName, setFolderName] = useState<string>("");
   const [folderToggle, setFolderToggle] = useState(false);
 
@@ -99,13 +96,19 @@ function SideMenu() {
         );
       }
 
-      setFileName((prev) => [...prev, file.name]);
-      await fileUpload(file, setProgress, Folder?.[1] || "", userId, userEmail ?? "");
+      const uploadId = crypto.randomUUID();
+      setUploads((prev) => [...prev, { id: uploadId, name: file.name, progress: 0 }]);
+      await fileUpload(
+        file,
+        uploadId,
+        setUploads,
+        Folder?.[1] || "",
+        userId,
+        userEmail ?? "",
+      );
     }
     e.target.value = "";
   };
-  fileName.reverse();
-  progress.reverse();
 
   // Add new folder
   const uploadFolder = async () => {
@@ -282,10 +285,12 @@ function SideMenu() {
         );
       }
 
-      setFileName((prev) => [...prev, uploadName]);
+      const uploadId = crypto.randomUUID();
+      setUploads((prev) => [...prev, { id: uploadId, name: uploadName, progress: 0 }]);
       await fileUpload(
         file,
-        setProgress,
+        uploadId,
+        setUploads,
         parentId,
         userId,
         userEmail ?? "",
@@ -318,9 +323,8 @@ function SideMenu() {
       )}
       {/* Progress Indicator */}
       <ProgressIndicator
-        progress={progress}
-        fileName={fileName}
-        setFileName={setFileName}
+        uploads={uploads}
+        setUploads={setUploads}
       />
       {/* New folder */}
       {folderToggle && (
