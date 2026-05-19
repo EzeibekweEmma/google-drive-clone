@@ -78,22 +78,7 @@ interface payloadProps {
 }
 
 interface FileDropDownProps {
-  file: {
-    folderName: string;
-    isFolder: boolean;
-    isStarred: boolean;
-    isTrashed: boolean;
-    id: string;
-    fileLink: string;
-    fileName: string;
-    fileExtension: string;
-    folderId: string;
-    userId?: string;
-    userEmail?: string;
-    publicId?: string;
-    resourceType?: string;
-    fileSize?: number;
-  };
+  file: FileListProps;
   folderId: string;
   isFolderComp: boolean;
   select: string;

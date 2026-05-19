@@ -59,11 +59,11 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
       fileIcons.any;
 
     const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
-      file.fileExtension,
+      file.fileExtension ?? "",
     ) ? (
       <Image
-        src={file.fileLink}
-        alt={file.fileName}
+        src={file.fileLink ?? ""}
+        alt={file.fileName ?? "image"}
         height="500"
         width="500"
         draggable={false}
@@ -73,13 +73,13 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
       <div className="flex flex-col items-center justify-center">
         <div className="h-24 w-24 ">{icon}</div>
         <audio controls className="w-44">
-          <source src={file.fileLink} type="audio/mpeg" />
+          <source src={file.fileLink ?? ""} type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
       </div>
     ) : file.fileExtension === "mp4" ? (
       <video controls>
-        <source src={file.fileLink} type="audio/mpeg" />
+        <source src={file.fileLink ?? ""} type="video/mp4" />
         <div className="h-36 w-36 ">{icon}</div>
       </video>
     ) : (
@@ -87,17 +87,17 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     );
 
     // set a condition for the files to be displayed
-    let condition = !file?.isFolder && !file?.isTrashed;
+    let condition = !file?.isFolder && !(file?.isTrashed ?? false);
     if (select === "starred")
-      condition = !file?.isFolder && file?.isStarred && !file?.isTrashed;
+      condition = !file?.isFolder && (file?.isStarred ?? false) && !(file?.isTrashed ?? false);
     else if (select === "trashed")
-      condition = !file?.isFolder && file?.isTrashed;
+      condition = !file?.isFolder && (file?.isTrashed ?? false);
 
     return (
       condition && (
         <div
           key={file.id}
-          onDoubleClick={() => openFile(file.fileLink)}
+          onDoubleClick={() => file.fileLink && openFile(file.fileLink)}
           className="hover:cursor-alias"
         >
           <div
@@ -114,7 +114,9 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
               <BsThreeDotsVertical
                 onClick={(event) => {
                   event.stopPropagation();
-                  handleMenuToggle(file.id);
+                  if (file.id) {
+                    handleMenuToggle(file.id);
+                  }
                 }}
                 className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
               />
@@ -122,7 +124,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                 /* drop down */
                 openMenu === file.id && (
                   <FileDropDown
-                    file={file}
+                    file={{ ...file, folderName: file.folderName ?? "", isFolder: file.isFolder ?? false, isStarred: file.isStarred ?? false, isTrashed: file.isTrashed ?? false, id: file.id ?? "", fileLink: file.fileLink ?? "", fileName: file.fileName ?? "", fileExtension: file.fileExtension ?? "", folderId: file.folderId ?? "" }}
                     setOpenMenu={setOpenMenu}
                     isFolderComp={false}
                     select={select}
@@ -137,9 +139,9 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                   <Rename
                     setRenameToggle={setRenameToggle}
                     fileId={file.id}
-                    isFolder={file.isFolder}
-                    fileName={file.fileName}
-                    fileExtension={file.fileExtension}
+                    isFolder={file.isFolder ?? false}
+                    fileName={file.fileName ?? ""}
+                    fileExtension={file.fileExtension ?? ""}
                   />
                 )
               }

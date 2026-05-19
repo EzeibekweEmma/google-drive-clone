@@ -82,7 +82,9 @@ function GetFolders({
           <BsThreeDotsVertical
             onClick={(event) => {
               event.stopPropagation();
-              handleMenuToggle(folder.id);
+              if (folder.id) {
+                handleMenuToggle(folder.id);
+              }
             }}
             className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
           />
@@ -90,7 +92,7 @@ function GetFolders({
             /* drop down */
             openMenu === folder.id && (
               <FileDropDown
-                file={folder}
+                file={{ ...folder, folderName: folder.folderName ?? "", isFolder: folder.isFolder ?? true, isStarred: folder.isStarred ?? false, isTrashed: folder.isTrashed ?? false, id: folder.id ?? "", fileLink: folder.fileLink ?? "", fileName: folder.fileName ?? "", fileExtension: folder.fileExtension ?? "", folderId: folder.folderId ?? "" }}
                 setOpenMenu={setOpenMenu}
                 isFolderComp={true}
                 select={select}
@@ -105,8 +107,8 @@ function GetFolders({
               <Rename
                 setRenameToggle={setRenameToggle}
                 fileId={folder.id}
-                fileName={folder.folderName}
-                isFolder={folder.isFolder}
+                fileName={folder.folderName ?? ""}
+                isFolder={folder.isFolder ?? true}
                 fileExtension=""
               />
             )
