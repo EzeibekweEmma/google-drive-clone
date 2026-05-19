@@ -1,10 +1,10 @@
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useFetchFiles } from "@/hooks/fetchFiles";
 import React, { useState } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
 
@@ -21,14 +21,38 @@ function GetFolders({
   const { data: session } = useSession();
 
   const router = useRouter();
-  let folderList = fetchFiles(folderId, session?.user.email!);
-  if (select) folderList = fetchAllFiles(session?.user.email!);
+  const specificFolderList = useFetchFiles(folderId, session?.user.id, session?.user.email ?? undefined);
+  const allFilesList = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
+  const folderList = select ? allFilesList : specificFolderList;
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
     setRenameToggle("");
     setOpenMenu((prevOpenMenu) => (prevOpenMenu === fileId ? "" : fileId));
+    window.dispatchEvent(
+      new CustomEvent("drive-menu-open", {
+        detail: { fileId, source: "folders" },
+      }),
+    );
   };
+
+  React.useEffect(() => {
+    const handleCloseOtherMenus = (event: Event) => {
+      const customEvent = event as CustomEvent<{ fileId: string; source: string }>;
+      if (customEvent.detail?.source !== "folders") {
+        setOpenMenu("");
+        setRenameToggle("");
+      }
+    };
+
+    window.addEventListener("drive-menu-open", handleCloseOtherMenus);
+    return () => {
+      window.removeEventListener(
+        "drive-menu-open",
+        handleCloseOtherMenus,
+      );
+    };
+  }, []);
 
   const folders = folderList.map((folder) => {
     // set a condition for the folders to be displayed
@@ -43,7 +67,9 @@ function GetFolders({
         <div
           key={folder.id}
           onDoubleClick={() => {
-            select !== "trashed" && router.push("/drive/folders/" + folder.id);
+            if (select !== "trashed") {
+              void router.push("/drive/folders/" + folder.id);
+            }
           }}
           className="relative flex w-[13.75rem] cursor-alias items-center justify-between rounded-xl bg-darkC2 p-3 hover:bg-darkC"
         >
@@ -54,14 +80,19 @@ function GetFolders({
             </span>
           </div>
           <BsThreeDotsVertical
-            onClick={() => handleMenuToggle(folder.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (folder.id) {
+                handleMenuToggle(folder.id);
+              }
+            }}
             className="h-6 w-6 cursor-pointer rounded-full p-1 hover:bg-[#ccc]"
           />
           {
             /* drop down */
             openMenu === folder.id && (
               <FileDropDown
-                file={folder}
+                file={{ ...folder, folderName: folder.folderName ?? "", isFolder: folder.isFolder ?? true, isStarred: folder.isStarred ?? false, isTrashed: folder.isTrashed ?? false, id: folder.id ?? "", fileLink: folder.fileLink ?? "", fileName: folder.fileName ?? "", fileExtension: folder.fileExtension ?? "", folderId: folder.folderId ?? "" }}
                 setOpenMenu={setOpenMenu}
                 isFolderComp={true}
                 select={select}
@@ -76,8 +107,8 @@ function GetFolders({
               <Rename
                 setRenameToggle={setRenameToggle}
                 fileId={folder.id}
-                fileName={folder.folderName}
-                isFolder={folder.isFolder}
+                fileName={folder.folderName ?? ""}
+                isFolder={folder.isFolder ?? true}
                 fileExtension=""
               />
             )
