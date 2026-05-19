@@ -1,4 +1,5 @@
 import { database } from "@/firebaseConfig";
+import { formatBytes } from "@/utils/formatBytes";
 import {
   collection,
   addDoc,
@@ -417,7 +418,7 @@ export const copyEntry = async (
   const copySize = getEntrySizeForCopy(entry, ownedEntries);
 
   if (currentUsage + copySize > USER_STORAGE_LIMIT_BYTES) {
-    window.alert("This copy would exceed your 500MB storage limit.");
+    window.alert(`This copy would exceed your ${formatBytes(USER_STORAGE_LIMIT_BYTES)} storage limit.`);
     return;
   }
 

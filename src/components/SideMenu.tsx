@@ -15,6 +15,7 @@ import {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { formatBytes } from "@/utils/formatBytes";
 
 function SideMenu() {
   const [isDropDown, setIsDropDown] = useState(false);
@@ -33,18 +34,6 @@ function SideMenu() {
     if (entry.isFolder) return total;
     return total + Number(entry.fileSize ?? 0);
   }, 0);
-
-  const formatBytes = (bytes: number) => {
-    if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(1)} KB`;
-    }
-
-    if (bytes < 1024 * 1024 * 1024) {
-      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    }
-
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-  };
 
   const ensureWithinStorageLimit = (bytesToAdd: number) => {
     if (currentUsageBytes + bytesToAdd > USER_STORAGE_LIMIT_BYTES) {
