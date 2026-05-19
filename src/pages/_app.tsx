@@ -1,6 +1,7 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
+import { useRouter } from "next/router";
 import "@/styles/globals.css";
 import Header from "@/components/headerComponents/Header";
 import SideMenu from "@/components/SideMenu";
@@ -9,6 +10,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
+  const isSharePage = router.pathname.startsWith("/share/");
+
+  if (isSharePage) {
+    return (
+      <SessionProvider session={session}>
+        <main className="min-h-screen bg-bgc">
+          <Component {...pageProps} />
+        </main>
+      </SessionProvider>
+    );
+  }
+
   return (
     <SessionProvider session={session}>
       <main className="flex h-screen flex-col items-center justify-between overflow-hidden bg-bgc">

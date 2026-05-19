@@ -1,4 +1,5 @@
 import React from "react";
+import { FiShare2 } from "react-icons/fi";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
 import {
   MdContentCopy,
@@ -14,6 +15,7 @@ import { deleteFile, moveEntry, copyEntry, starFile, trashFile } from "@/API/Fir
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import TransferDialog from "./TransferDialog";
+import ShareDialog from "./ShareDialog";
 
 function FileDropDown({
   file,
@@ -26,6 +28,7 @@ function FileDropDown({
   const router = useRouter();
   const { data: session } = useSession();
   const [transferMode, setTransferMode] = React.useState<"move" | "copy" | "">("");
+  const [shareOpen, setShareOpen] = React.useState(false);
   const closeMenu = () => setOpenMenu("");
 
   const openFile = (fileLink: string) => {
@@ -60,9 +63,7 @@ function FileDropDown({
     <>
       <section
         onClick={(event) => event.stopPropagation()}
-        className={`absolute top-9 z-10 ${
-          select == "trashed" ? "h-fit" : "h-52"
-        } w-52 overflow-y-auto rounded-md border bg-white shadow-sm shadow-[#777]`}
+        className="absolute top-9 z-10 max-h-72 w-52 overflow-y-auto rounded-md border bg-white shadow-sm shadow-[#777]"
       >
         {select !== "trashed" ? (
           <>
@@ -130,6 +131,17 @@ function FileDropDown({
               <MdContentCopy className="h-5 w-5" />
               <span className="text-sm">Make a copy to</span>
             </div>
+            {!isFolderComp && (
+              <div
+                onClick={() => {
+                  setShareOpen(true);
+                }}
+                className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
+              >
+                <FiShare2 className="h-5 w-5" />
+                <span className="text-sm">Copy link</span>
+              </div>
+            )}
             <div
               onClick={() => {
                 closeMenu();
@@ -191,6 +203,15 @@ function FileDropDown({
             }
 
             await copyEntry(file, destinationId, session.user.id, session.user.email ?? undefined);
+          }}
+        />
+      )}
+      {shareOpen && !isFolderComp && (
+        <ShareDialog
+          file={file}
+          onClose={() => {
+            setShareOpen(false);
+            closeMenu();
           }}
         />
       )}

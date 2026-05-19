@@ -88,6 +88,8 @@ export const addFiles = (
       publicId: publicId ?? "",
       resourceType: resourceType ?? "raw",
       fileSize: fileSize ?? 0,
+      isShared: false,
+      shareToken: "",
     });
   } catch (err) {
     console.error(err);
@@ -97,6 +99,8 @@ export const addFiles = (
 export const addFolder = (payload: payloadProps) => {
   try {
     return addDoc(files, {
+      isShared: false,
+      shareToken: "",
       ...payload,
     });
   } catch (err) {
@@ -174,6 +178,23 @@ export const trashFile = async (fileId: string, isTrashed: boolean) => {
     });
   } catch (error) {
     console.error("Error updating file properties: ", error);
+  }
+};
+
+export const updateShareSettings = async (
+  fileId: string,
+  isShared: boolean,
+  shareToken = "",
+) => {
+  const fileRef = doc(files, fileId);
+  try {
+    await updateDoc(fileRef, {
+      isShared,
+      shareToken: isShared ? shareToken : "",
+    });
+  } catch (error) {
+    console.error("Error updating share settings: ", error);
+    throw error;
   }
 };
 

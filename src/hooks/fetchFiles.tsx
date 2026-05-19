@@ -44,6 +44,8 @@ export const fetchFiles = (
                   isStarred: data.isStarred,
                   isTrashed: data.isTrashed,
                   fileSize: data.fileSize,
+                  isShared: data.isShared,
+                  shareToken: data.shareToken,
                 };
               })
               .filter((file) => matchesOwner(file, userId, userEmail))
@@ -73,6 +75,8 @@ export const fetchFiles = (
                   isStarred: data.isStarred,
                   isTrashed: data.isTrashed,
                   fileSize: data.fileSize,
+                  isShared: data.isShared,
+                  shareToken: data.shareToken,
                 };
               })
               .filter((file) => matchesOwner(file, userId, userEmail))
