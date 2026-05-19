@@ -4,33 +4,44 @@ import { useEffect, useState } from "react";
 
 let files = collection(database, "files");
 
-export const fetchAllFiles = (userId: string) => {
+const matchesOwner = (
+  data: Record<string, unknown>,
+  userId: string,
+  userEmail?: string,
+) => {
+  return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
+};
+
+export const fetchAllFiles = (userId: string, userEmail?: string) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
   const allFiles = () => {
     if (userId) {
-      const getUserFiles = query(files, where("userId", "==", userId));
+      const getUserFiles = query(files, where("userId", "!=", null));
       onSnapshot(getUserFiles, (res) => {
         return setFileList(
-          res.docs.map((doc) => {
-            const fileExtension = doc
-              .data()
-              .fileName?.split(".")
-              .pop()
-              ?.toLowerCase();
-            return {
-              ...doc.data(),
-              id: doc.id,
-              fileName: doc.data().fileName,
-              fileExtension: fileExtension,
-              fileLink: doc.data().fileLink,
-              folderId: doc.data().folderId,
-              folderName: doc.data().folderName,
-              isFolder: doc.data().isFolder,
-              isStarred: doc.data().isStarred,
-              isTrashed: doc.data().isTrashed,
-            };
-          }),
+          res.docs
+            .map((doc) => {
+              const data = doc.data();
+              const fileExtension = doc
+                .data()
+                .fileName?.split(".")
+                .pop()
+                ?.toLowerCase();
+              return {
+                ...data,
+                id: doc.id,
+                fileName: data.fileName,
+                fileExtension: fileExtension,
+                fileLink: data.fileLink,
+                folderId: data.folderId,
+                folderName: data.folderName,
+                isFolder: data.isFolder,
+                isStarred: data.isStarred,
+                isTrashed: data.isTrashed,
+              };
+            })
+            .filter((file) => matchesOwner(file, userId, userEmail)),
         );
       });
     }
@@ -38,7 +49,7 @@ export const fetchAllFiles = (userId: string) => {
 
   useEffect(() => {
     allFiles();
-  }, [userId]);
+  }, [userEmail, userId]);
 
   return fileList;
 };

@@ -7,6 +7,7 @@ const fileUpload = (
   setProgress: Function,
   parentId: string,
   userId: string,
+  userEmail?: string,
 ) => {
   const safeName = `${crypto.randomUUID()}-${file.name}`;
   const storageRef = ref(storage, `files/${userId}/${safeName}`);
@@ -25,7 +26,7 @@ const fileUpload = (
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        addFiles(downloadURL, file.name, parentId, userId);
+        addFiles(downloadURL, file.name, parentId, userId, userEmail);
       });
     },
   );

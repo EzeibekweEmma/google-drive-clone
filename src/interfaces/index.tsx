@@ -52,6 +52,7 @@ interface FileListProps {
   fileExtension: string;
   folderId: string;
   userId?: string;
+  userEmail?: string;
 }
 interface payloadProps {
   folderName: string;
@@ -61,6 +62,7 @@ interface payloadProps {
   isTrashed?: boolean;
   folderId?: string;
   userId?: string;
+  userEmail?: string;
 }
 
 interface FileDropDownProps {

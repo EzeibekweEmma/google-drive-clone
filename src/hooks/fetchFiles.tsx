@@ -4,35 +4,49 @@ import { useEffect, useState } from "react";
 
 let files = collection(database, "files");
 
-export const fetchFiles = (folderId: string, userId: string) => {
+const matchesOwner = (
+  data: Record<string, unknown>,
+  userId: string,
+  userEmail?: string,
+) => {
+  return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
+};
+
+export const fetchFiles = (
+  folderId: string,
+  userId: string,
+  userEmail?: string,
+) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
   const getFolders = () => {
     if (userId) {
-      const getUserFiles = query(files, where("userId", "==", userId));
+      const getUserFiles = query(files, where("userId", "!=", null));
       if (!folderId) {
         onSnapshot(getUserFiles, (res) => {
           return setFileList(
             res.docs
               .map((doc) => {
+                const data = doc.data();
                 const fileExtension = doc
                   .data()
                   .fileName?.split(".")
                   .pop()
                   ?.toLowerCase();
                 return {
-                  ...doc.data(),
+                  ...data,
                   id: doc.id,
-                  fileName: doc.data().fileName,
+                  fileName: data.fileName,
                   fileExtension: fileExtension,
-                  fileLink: doc.data().fileLink,
-                  folderId: doc.data().folderId,
-                  folderName: doc.data().folderName,
-                  isFolder: doc.data().isFolder,
-                  isStarred: doc.data().isStarred,
-                  isTrashed: doc.data().isTrashed,
+                  fileLink: data.fileLink,
+                  folderId: data.folderId,
+                  folderName: data.folderName,
+                  isFolder: data.isFolder,
+                  isStarred: data.isStarred,
+                  isTrashed: data.isTrashed,
                 };
               })
+              .filter((file) => matchesOwner(file, userId, userEmail))
               .filter((file) => file.folderId === "") as FileListProps[],
           );
         });
@@ -41,24 +55,26 @@ export const fetchFiles = (folderId: string, userId: string) => {
           return setFileList(
             res.docs
               .map((doc) => {
+                const data = doc.data();
                 const fileExtension = doc
                   .data()
                   .fileName?.split(".")
                   .pop()
                   ?.toLowerCase();
                 return {
-                  ...doc.data(),
+                  ...data,
                   id: doc.id,
-                  fileName: doc.data().fileName,
+                  fileName: data.fileName,
                   fileExtension: fileExtension,
-                  fileLink: doc.data().fileLink,
-                  folderId: doc.data().folderId,
-                  folderName: doc.data().folderName,
-                  isFolder: doc.data().isFolder,
-                  isStarred: doc.data().isStarred,
-                  isTrashed: doc.data().isTrashed,
+                  fileLink: data.fileLink,
+                  folderId: data.folderId,
+                  folderName: data.folderName,
+                  isFolder: data.isFolder,
+                  isStarred: data.isStarred,
+                  isTrashed: data.isTrashed,
                 };
               })
+              .filter((file) => matchesOwner(file, userId, userEmail))
               .filter((file) => file.folderId === folderId) as FileListProps[],
           );
         });
@@ -68,7 +84,7 @@ export const fetchFiles = (folderId: string, userId: string) => {
 
   useEffect(() => {
     getFolders();
-  }, [folderId, userId]);
+  }, [folderId, userEmail, userId]);
 
   return fileList;
 };

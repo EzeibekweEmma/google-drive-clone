@@ -17,6 +17,7 @@ export const addFiles = (
   fileName: string,
   folderId: string,
   userId: string,
+  userEmail?: string,
 ) => {
   try {
     addDoc(files, {
@@ -27,6 +28,7 @@ export const addFiles = (
       isTrashed: false,
       folderId: folderId,
       userId: userId,
+      userEmail: userEmail ?? "",
     });
   } catch (err) {
     console.error(err);

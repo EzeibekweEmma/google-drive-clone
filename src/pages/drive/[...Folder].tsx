@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { fetchFiles } from "@/hooks/fetchFiles";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -19,9 +20,40 @@ function Folder() {
   const { Folder } = router.query;
 
   const { data: session } = useSession();
+  const currentFolderId = Folder?.[1] || "";
 
   // Fetch the list of files and folders
-  const list = fetchFiles(Folder?.[1] || "", session?.user.id!);
+  const list = fetchFiles(
+    currentFolderId,
+    session?.user.id!,
+    session?.user.email,
+  );
+  const allFiles = fetchAllFiles(session?.user.id!, session?.user.email);
+  const currentFolder = allFiles.find(
+    (item) => item.id === currentFolderId && item.isFolder,
+  );
+  const headerName = currentFolder?.folderName || "Folder";
+  const breadcrumbs = React.useMemo(() => {
+    if (!currentFolderId) return [{ id: "", label: "My Drive" }];
+
+    const folderMap = new Map(
+      allFiles.filter((item) => item.isFolder).map((item) => [item.id, item]),
+    );
+    const trail = [];
+    let pointer = folderMap.get(currentFolderId);
+
+    while (pointer) {
+      trail.unshift({
+        id: pointer.id,
+        label: pointer.folderName || "Folder",
+      });
+
+      if (!pointer.folderId) break;
+      pointer = folderMap.get(pointer.folderId);
+    }
+
+    return [{ id: "", label: "My Drive" }, ...trail];
+  }, [allFiles, currentFolderId]);
 
   useEffect(() => {
     // Determine if there are folders and files in the list
@@ -40,12 +72,12 @@ function Folder() {
   return (
     <>
       <Head>
-        <title>My Drive - Google Drive</title>
+        <title>{headerName} - Google Drive</title>
         <meta name="description" content="This is a google drive clone!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        <FileHeader headerName={"Nested Folder"} />
+        <FileHeader headerName={headerName} breadcrumbs={breadcrumbs} />
         <div className="h-[75vh] w-full overflow-y-auto p-5">
           {/* If the list is loading, display the loading state */}
           {!isFile && !isFolder && isLoading ? (
@@ -62,7 +94,7 @@ function Folder() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Folders</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFolders folderId={Folder?.[1] || ""} select={""} />
+                        <GetFolders folderId={currentFolderId} select={""} />
                       </div>
                     </div>
                   )}
@@ -71,7 +103,7 @@ function Folder() {
                     <div className="mb-5 flex flex-col space-y-4">
                       <h2>Files</h2>
                       <div className="flex flex-wrap justify-start gap-x-3 gap-y-5 text-textC">
-                        <GetFiles folderId={Folder?.[1] || ""} select={""} />
+                        <GetFiles folderId={currentFolderId} select={""} />
                       </div>
                     </div>
                   )}

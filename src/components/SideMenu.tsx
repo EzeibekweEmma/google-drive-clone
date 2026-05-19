@@ -24,15 +24,18 @@ function SideMenu() {
 
   const { data: session } = useSession();
   const userId = session?.user.id;
+  const userEmail = session?.user.email;
 
   // Add new file
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!userId) return;
+
     const files = e.target.files || [];
     for (let i = 0; i < files.length; i++) {
       const file = files?.[i];
       if (!file) return;
       setFileName((prev) => [...prev, file.name]);
-      fileUpload(file, setProgress, Folder?.[1] || "", userId!);
+      fileUpload(file, setProgress, Folder?.[1] || "", userId, userEmail);
     }
   };
   fileName.reverse();
@@ -40,6 +43,8 @@ function SideMenu() {
 
   // Add new folder
   const uploadFolder = () => {
+    if (!userId) return;
+
     let payload = {
       folderName: folderName === "" ? "Untitled folder" : folderName,
       isFolder: true,
@@ -48,6 +53,7 @@ function SideMenu() {
       FileList: [],
       folderId: Folder?.[1] || "",
       userId,
+      userEmail: userEmail ?? "",
     };
 
     addFolder(payload);

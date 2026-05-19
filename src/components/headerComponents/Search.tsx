@@ -11,7 +11,7 @@ function Search() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { data: session } = useSession();
-  let list = fetchAllFiles(session?.user.id!);
+  let list = fetchAllFiles(session?.user.id!, session?.user.email);
 
   const router = useRouter();
 
