@@ -9,7 +9,7 @@ const fileUpload = (
 ) => {
   const upload = async () => {
     try {
-      const folder = `drive-clone/${userId}`;
+      const folder = `google-drive-clone/${userId}`;
       const signResponse = await fetch("/api/cloudinary/sign-upload", {
         method: "POST",
         headers: {
