@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import DropDown from "./addBtnComponents/DropDown";
 import AddFolder from "./addBtnComponents/AddFolder";
@@ -14,7 +14,7 @@ import {
 } from "@/API/Firestore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { formatBytes } from "@/utils/formatBytes";
 
 function SideMenu() {
@@ -29,7 +29,7 @@ function SideMenu() {
   const { data: session } = useSession();
   const userId = session?.user.id;
   const userEmail = session?.user.email;
-  const allFiles = fetchAllFiles(userId!, userEmail ?? undefined);
+  const allFiles = useFetchAllFiles(userId, userEmail ?? undefined);
   const currentUsageBytes = allFiles.reduce((total, entry) => {
     if (entry.isFolder) return total;
     return total + Number(entry.fileSize ?? 0);
@@ -48,7 +48,7 @@ function SideMenu() {
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!userId) return;
 
-    const files = e.target.files || [];
+    const files = e.target.files ?? [];
     const totalUploadSize = Array.from(files).reduce(
       (total, file) => total + Number(file?.size ?? 0),
       0,
@@ -59,14 +59,11 @@ function SideMenu() {
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files?.[i];
-      if (!file) return;
-
+    for (const file of files) {
       const conflict = allFiles.find(
         (entry) =>
           !entry.isFolder &&
-          entry.folderId === (Folder?.[1] || "") &&
+          entry.folderId === (Folder?.[1] ?? "") &&
           entry.fileName === file.name,
       );
 
@@ -91,7 +88,7 @@ function SideMenu() {
         file,
         uploadId,
         setUploads,
-        Folder?.[1] || "",
+        Folder?.[1] ?? "",
         userId,
         userEmail ?? "",
       );
@@ -107,7 +104,7 @@ function SideMenu() {
     const conflict = allFiles.find(
       (entry) =>
         entry.isFolder &&
-        entry.folderId === (Folder?.[1] || "") &&
+        entry.folderId === (Folder?.[1] ?? "") &&
         entry.folderName === nextFolderName,
     );
 
@@ -121,13 +118,13 @@ function SideMenu() {
       await replaceConflictingEntry(conflict);
     }
 
-    let payload = {
+    const payload = {
       folderName: nextFolderName,
       isFolder: true,
       isStarred: false,
       isTrashed: false,
       FileList: [],
-      folderId: Folder?.[1] || "",
+      folderId: Folder?.[1] ?? "",
       userId,
       userEmail: userEmail ?? "",
     };
@@ -140,7 +137,7 @@ function SideMenu() {
   const uploadFolderFiles = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!userId) return;
 
-    const files = Array.from(e.target.files || []);
+    const files = Array.from(e.target.files ?? []);
     if (files.length === 0) return;
 
     const totalUploadSize = files.reduce(
@@ -153,7 +150,7 @@ function SideMenu() {
       return;
     }
 
-    const currentFolderId = Folder?.[1] || "";
+    const currentFolderId = Folder?.[1] ?? "";
     const folderDocsById = new Map(
       allFiles.filter((entry) => entry.isFolder).map((entry) => [entry.id, entry]),
     );
@@ -248,7 +245,7 @@ function SideMenu() {
     for (const file of files) {
       const relativePath = file.webkitRelativePath || file.name;
       const parts = relativePath.split("/");
-      const uploadName = parts.pop() || file.name;
+      const uploadName = parts.pop() ?? file.name;
       const relativeFolderPath = parts.join("/");
       const parentId = await ensureFolderPath(relativeFolderPath);
 

@@ -13,18 +13,18 @@ import {
   type DocumentData,
 } from "firebase/firestore";
 
-let files = collection(database, "files");
+const files = collection(database, "files");
 export const USER_STORAGE_LIMIT_BYTES = 200 * 1024 * 1024;
 
 const matchesOwner = (
   data: Record<string, unknown>,
   userId: string,
-  userEmail?: string,
+  userEmail?: string | null,
 ) => {
   return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
 };
 
-const getOwnedEntries = async (userId: string, userEmail?: string) => {
+const getOwnedEntries = async (userId: string, userEmail?: string | null) => {
   const snapshot = await getDocs(files);
 
   return snapshot.docs.filter((entry) =>
@@ -47,13 +47,13 @@ const findConflictEntry = (
     isFolder: boolean;
     name: string;
     userId: string;
-    userEmail?: string;
+    userEmail?: string | null;
     excludeId?: string;
   },
 ) => {
   return entries.find((entry) => {
     const data = "data" in entry ? entry.data() : entry;
-    const entryId = "data" in entry ? entry.id : (entry as FileListProps).id;
+    const entryId = "data" in entry ? entry.id : entry.id;
 
     return (
       (data.userId === options.userId ||

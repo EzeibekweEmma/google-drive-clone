@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useFetchFiles } from "@/hooks/fetchFiles";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSession } from "next-auth/react";
 import FileDropDown from "./FileDropDown";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import Rename from "./Rename";
 
 function GetFiles({ folderId, select }: { folderId: string; select: string }) {
@@ -14,8 +14,10 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   const { data: session } = useSession();
 
-  let fileList = fetchFiles(folderId, session?.user.id!, session?.user.email);
-  if (select) fileList = fetchAllFiles(session?.user.id!, session?.user.email);
+  const fileListByFolder = useFetchFiles(folderId, session?.user.id, session?.user.email ?? undefined);
+  const fileListAll = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
+  
+  const fileList = select ? fileListAll : fileListByFolder;
 
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
@@ -41,11 +43,11 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
       }
     };
 
-    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
+    window.addEventListener("drive-menu-open", handleCloseOtherMenus);
     return () => {
       window.removeEventListener(
         "drive-menu-open",
-        handleCloseOtherMenus as EventListener,
+        handleCloseOtherMenus,
       );
     };
   }, []);
@@ -54,7 +56,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     // getting the icon for the file
     const icon =
       fileIcons[file.fileExtension as keyof typeof fileIcons] ??
-      fileIcons["any"];
+      fileIcons.any;
 
     const img = ["jpg", "ico", "webp", "png", "jpeg", "gif", "jfif"].includes(
       file.fileExtension,

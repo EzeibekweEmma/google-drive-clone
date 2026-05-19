@@ -2,36 +2,64 @@ import { onSnapshot, collection } from "firebase/firestore";
 import { database } from "@/firebaseConfig";
 import { useEffect, useState } from "react";
 
-let files = collection(database, "files");
+interface FileData extends Record<string, unknown> {
+  fileName?: string;
+  fileLink?: string;
+  folderId?: string;
+  folderName?: string;
+  isFolder?: boolean;
+  isStarred?: boolean;
+  isTrashed?: boolean;
+  fileSize?: number;
+  isShared?: boolean;
+  shareToken?: string;
+  userId?: string;
+  userEmail?: string;
+}
+
+interface FileListProps extends Record<string, unknown> {
+  id?: string;
+  fileName?: string;
+  fileExtension?: string;
+  fileLink?: string;
+  folderId?: string;
+  folderName?: string;
+  isFolder?: boolean;
+  isStarred?: boolean;
+  isTrashed?: boolean;
+  fileSize?: number;
+  isShared?: boolean;
+  shareToken?: string;
+  userId?: string;
+  userEmail?: string;
+}
+
+const files = collection(database, "files");
 
 const matchesOwner = (
   data: Record<string, unknown>,
   userId: string,
-  userEmail?: string,
+  userEmail?: string | null,
 ) => {
   return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
 };
 
-export const fetchFiles = (
+export const useFetchFiles = (
   folderId: string,
-  userId: string,
-  userEmail?: string,
+  userId?: string,
+  userEmail?: string | null,
 ) => {
   const [fileList, setFileList] = useState<FileListProps[]>([]);
 
-  const getFolders = () => {
+  useEffect(() => {
     if (userId) {
       if (!folderId) {
         onSnapshot(files, (res) => {
           return setFileList(
             res.docs
               .map((doc) => {
-                const data = doc.data();
-                const fileExtension = doc
-                  .data()
-                  .fileName?.split(".")
-                  .pop()
-                  ?.toLowerCase();
+                const data = doc.data() as FileData;
+                const fileExtension = data.fileName?.split(".").pop()?.toLowerCase();
                 return {
                   ...data,
                   id: doc.id,
@@ -48,8 +76,8 @@ export const fetchFiles = (
                   shareToken: data.shareToken,
                 };
               })
-              .filter((file) => matchesOwner(file, userId, userEmail))
-              .filter((file) => file.folderId === "") as FileListProps[],
+              .filter((file) => matchesOwner(file as Record<string, unknown>, userId, userEmail))
+              .filter((file) => file.folderId === ""),
           );
         });
       } else {
@@ -57,12 +85,8 @@ export const fetchFiles = (
           return setFileList(
             res.docs
               .map((doc) => {
-                const data = doc.data();
-                const fileExtension = doc
-                  .data()
-                  .fileName?.split(".")
-                  .pop()
-                  ?.toLowerCase();
+                const data = doc.data() as FileData;
+                const fileExtension = data.fileName?.split(".").pop()?.toLowerCase();
                 return {
                   ...data,
                   id: doc.id,
@@ -80,15 +104,11 @@ export const fetchFiles = (
                 };
               })
               .filter((file) => matchesOwner(file, userId, userEmail))
-              .filter((file) => file.folderId === folderId) as FileListProps[],
+              .filter((file) => file.folderId === folderId),
           );
         });
       }
     }
-  };
-
-  useEffect(() => {
-    getFolders();
   }, [folderId, userEmail, userId]);
 
   return fileList;
