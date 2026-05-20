@@ -5,7 +5,7 @@ import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useFetchFiles } from "@/hooks/fetchFiles";
+import { fetchFiles } from "@/hooks/fetchFiles";
 import { DotLoader } from "react-spinners";
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
   const { data: session } = useSession();
 
   // Fetch the list of files and folders
-  const list = useFetchFiles("", session?.user.id, session?.user.email ?? undefined);
+  const list = fetchFiles("", session?.user.id!, session?.user.email as string);
 
   useEffect(() => {
     // Determine if there are folders and files in the list

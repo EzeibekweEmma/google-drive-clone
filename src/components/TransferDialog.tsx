@@ -1,4 +1,4 @@
-import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 import { useSession } from "next-auth/react";
 import React, { useMemo, useState } from "react";
 
@@ -16,11 +16,16 @@ function TransferDialog({
   const { data: session } = useSession();
   const [destinationId, setDestinationId] = useState(item.folderId || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const allFiles = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
+  const allFiles = fetchAllFiles(
+    session?.user.id!,
+    session?.user.email as string,
+  );
 
   const folderOptions = useMemo(() => {
     const folderMap = new Map(
-      allFiles.filter((entry) => entry.isFolder).map((entry) => [entry.id, entry]),
+      allFiles
+        .filter((entry) => entry.isFolder)
+        .map((entry) => [entry.id, entry]),
     );
     const blockedIds = new Set<string>();
 
@@ -30,7 +35,9 @@ function TransferDialog({
 
       while (stack.length > 0) {
         const currentId = stack.pop();
-        const children = allFiles.filter((entry) => entry.folderId === currentId);
+        const children = allFiles.filter(
+          (entry) => entry.folderId === currentId,
+        );
 
         for (const child of children) {
           if (child.isFolder && !blockedIds.has(child.id)) {
@@ -62,7 +69,7 @@ function TransferDialog({
       }));
 
     return [{ id: "", label: "My Drive" }, ...options];
-  }, [allFiles, item.id, item.isFolder]);
+  }, [allFiles, item.folderId, item.id, item.isFolder]);
 
   const submit = async () => {
     setIsSubmitting(true);
@@ -86,7 +93,8 @@ function TransferDialog({
         <div className="space-y-1">
           <h2 className="text-2xl capitalize">{mode} item</h2>
           <p className="text-sm text-textC">
-            Select where to {mode} &quot;{item.isFolder ? item.folderName : item.fileName}&quot;.
+            Select where to {mode} "
+            {item.isFolder ? item.folderName : item.fileName}".
           </p>
         </div>
         <select
