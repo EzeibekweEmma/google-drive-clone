@@ -1,10 +1,10 @@
-import { useFetchFiles } from "@/hooks/fetchFiles";
+import { fetchFiles } from "@/hooks/fetchFiles";
 import React, { useState } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
 
@@ -21,9 +21,9 @@ function GetFolders({
   const { data: session } = useSession();
 
   const router = useRouter();
-  const specificFolderList = useFetchFiles(folderId, session?.user.id, session?.user.email ?? undefined);
-  const allFilesList = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
-  const folderList = select ? allFilesList : specificFolderList;
+  let folderList = fetchFiles(folderId, session?.user.id!, session?.user.email);
+  if (select)
+    folderList = fetchAllFiles(session?.user.id!, session?.user.email);
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
@@ -45,11 +45,11 @@ function GetFolders({
       }
     };
 
-    window.addEventListener("drive-menu-open", handleCloseOtherMenus);
+    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
     return () => {
       window.removeEventListener(
         "drive-menu-open",
-        handleCloseOtherMenus,
+        handleCloseOtherMenus as EventListener,
       );
     };
   }, []);
@@ -67,9 +67,7 @@ function GetFolders({
         <div
           key={folder.id}
           onDoubleClick={() => {
-            if (select !== "trashed") {
-              void router.push("/drive/folders/" + folder.id);
-            }
+            select !== "trashed" && router.push("/drive/folders/" + folder.id);
           }}
           className="relative flex w-[13.75rem] cursor-alias items-center justify-between rounded-xl bg-darkC2 p-3 hover:bg-darkC"
         >

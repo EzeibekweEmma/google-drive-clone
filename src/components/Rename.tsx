@@ -25,7 +25,7 @@ function Rename({
         newName,
         isFolder,
         session.user.id,
-        session.user.email ?? undefined,
+        session.user.email,
       );
     } else {
       const formatName = newName.includes(".")
@@ -36,7 +36,7 @@ function Rename({
         formatName,
         isFolder,
         session.user.id,
-        session.user.email ?? undefined,
+        session.user.email,
       );
     }
     if (renamed) {
