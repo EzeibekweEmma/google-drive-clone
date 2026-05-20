@@ -7,8 +7,8 @@ import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useFetchFiles } from "@/hooks/fetchFiles";
-import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
+import { fetchFiles } from "@/hooks/fetchFiles";
+import { fetchAllFiles } from "@/hooks/fetchAllFiles";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -20,19 +20,19 @@ function Folder() {
   const { Folder } = router.query;
 
   const { data: session } = useSession();
-  const currentFolderId = Array.isArray(Folder) ? (Folder[1] ?? "") : "";
+  const currentFolderId = Folder?.[1] || "";
 
   // Fetch the list of files and folders
-  const list = useFetchFiles(
+  const list = fetchFiles(
     currentFolderId,
-    session?.user.id,
-    session?.user.email ?? undefined,
+    session?.user.id!,
+    session?.user.email!,
   );
-  const allFiles = useFetchAllFiles(session?.user.id, session?.user.email ?? undefined);
+  const allFiles = fetchAllFiles(session?.user.id!, session?.user.email ?? undefined);
   const currentFolder = allFiles.find(
     (item) => item.id === currentFolderId && item.isFolder,
   );
-  const headerName = currentFolder?.folderName ?? "Folder";
+  const headerName = currentFolder?.folderName || "Folder";
   const breadcrumbs = React.useMemo(() => {
     if (!currentFolderId) return [{ id: "", label: "My Drive" }];
 
@@ -45,7 +45,7 @@ function Folder() {
     while (pointer) {
       trail.unshift({
         id: pointer.id,
-        label: pointer.folderName ?? "Folder",
+        label: pointer.folderName || "Folder",
       });
 
       if (!pointer.folderId) break;
