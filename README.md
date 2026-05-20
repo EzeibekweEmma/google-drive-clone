@@ -56,9 +56,9 @@ Use [`.env.example`](./.env.example) as the template.
 
 Required groups:
 
-- `NEXTAUTH_SECRET`, 
+- `NEXTAUTH_SECRET`,
 - `NEXTAUTH_URL`,
-- `GOOGLE_CLIENT_ID`, 
+- `GOOGLE_CLIENT_ID`,
 - `GOOGLE_CLIENT_SECRET`,
 - `DATABASE_URL`
 - `NEXT_PUBLIC_FIREBASE_API_KEY`
@@ -84,8 +84,7 @@ Required groups:
 Before deploying:
 
 1. Set all environment variables in your hosting provider.
-2. Use a production-ready `DATABASE_URL`.
-   Local SQLite is fine for development, but a hosted database is recommended for production.
+2. Use a production-ready `DATABASE_URL`. eg: PostgreSQL database instead of SQLite.
 3. Run:
 
 ```bash
@@ -130,6 +129,7 @@ If deploying on Vercel, set the same environment variables there before the firs
 MIT License.
 
 ## Acknowledgements
+
 - Inspired by Google Drive's core features and UI.
 - Built with the help of Next.js, Firebase, Prisma, and Cloudinary documentation.
 - This project is a personal learning exercise and is not affiliated with Google.
