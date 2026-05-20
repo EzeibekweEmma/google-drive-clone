@@ -14,8 +14,13 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   const { data: session } = useSession();
 
-  let fileList = fetchFiles(folderId, session?.user.id!, session?.user.email);
-  if (select) fileList = fetchAllFiles(session?.user.id!, session?.user.email);
+  let fileList = fetchFiles(
+    folderId,
+    session?.user.id!,
+    session?.user.email as string,
+  );
+  if (select)
+    fileList = fetchAllFiles(session?.user.id!, session?.user.email as string);
 
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");
@@ -34,14 +39,20 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   React.useEffect(() => {
     const handleCloseOtherMenus = (event: Event) => {
-      const customEvent = event as CustomEvent<{ fileId: string; source: string }>;
+      const customEvent = event as CustomEvent<{
+        fileId: string;
+        source: string;
+      }>;
       if (customEvent.detail?.source !== "files") {
         setOpenMenu("");
         setRenameToggle("");
       }
     };
 
-    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
+    window.addEventListener(
+      "drive-menu-open",
+      handleCloseOtherMenus as EventListener,
+    );
     return () => {
       window.removeEventListener(
         "drive-menu-open",
@@ -87,7 +98,10 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
     // set a condition for the files to be displayed
     let condition = !file?.isFolder && !(file?.isTrashed ?? false);
     if (select === "starred")
-      condition = !file?.isFolder && (file?.isStarred ?? false) && !(file?.isTrashed ?? false);
+      condition =
+        !file?.isFolder &&
+        (file?.isStarred ?? false) &&
+        !(file?.isTrashed ?? false);
     else if (select === "trashed")
       condition = !file?.isFolder && (file?.isTrashed ?? false);
 
@@ -110,7 +124,7 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                 </span>
               </div>
               <BsThreeDotsVertical
-                onClick={(event) => {
+                onClick={(event: React.MouseEvent<SVGElement>) => {
                   event.stopPropagation();
                   if (file.id) {
                     handleMenuToggle(file.id);
@@ -122,7 +136,18 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
                 /* drop down */
                 openMenu === file.id && (
                   <FileDropDown
-                    file={{ ...file, folderName: file.folderName ?? "", isFolder: file.isFolder ?? false, isStarred: file.isStarred ?? false, isTrashed: file.isTrashed ?? false, id: file.id ?? "", fileLink: file.fileLink ?? "", fileName: file.fileName ?? "", fileExtension: file.fileExtension ?? "", folderId: file.folderId ?? "" }}
+                    file={{
+                      ...file,
+                      folderName: file.folderName ?? "",
+                      isFolder: file.isFolder ?? false,
+                      isStarred: file.isStarred ?? false,
+                      isTrashed: file.isTrashed ?? false,
+                      id: file.id ?? "",
+                      fileLink: file.fileLink ?? "",
+                      fileName: file.fileName ?? "",
+                      fileExtension: file.fileExtension ?? "",
+                      folderId: file.folderId ?? "",
+                    }}
                     setOpenMenu={setOpenMenu}
                     isFolderComp={false}
                     select={select}

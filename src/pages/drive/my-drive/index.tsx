@@ -16,7 +16,7 @@ export default function Home() {
   const { data: session } = useSession();
 
   // Fetch the list of files and folders
-  const list = fetchFiles("", session?.user.id!, session?.user.email);
+  const list = fetchFiles("", session?.user.id!, session?.user.email as string);
 
   useEffect(() => {
     // Determine if there are folders and files in the list

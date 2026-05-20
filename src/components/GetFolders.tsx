@@ -21,9 +21,16 @@ function GetFolders({
   const { data: session } = useSession();
 
   const router = useRouter();
-  let folderList = fetchFiles(folderId, session?.user.id!, session?.user.email);
+  let folderList = fetchFiles(
+    folderId,
+    session?.user.id!,
+    session?.user.email as string,
+  );
   if (select)
-    folderList = fetchAllFiles(session?.user.id!, session?.user.email);
+    folderList = fetchAllFiles(
+      session?.user.id!,
+      session?.user.email as string,
+    );
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
@@ -38,14 +45,20 @@ function GetFolders({
 
   React.useEffect(() => {
     const handleCloseOtherMenus = (event: Event) => {
-      const customEvent = event as CustomEvent<{ fileId: string; source: string }>;
+      const customEvent = event as CustomEvent<{
+        fileId: string;
+        source: string;
+      }>;
       if (customEvent.detail?.source !== "folders") {
         setOpenMenu("");
         setRenameToggle("");
       }
     };
 
-    window.addEventListener("drive-menu-open", handleCloseOtherMenus as EventListener);
+    window.addEventListener(
+      "drive-menu-open",
+      handleCloseOtherMenus as EventListener,
+    );
     return () => {
       window.removeEventListener(
         "drive-menu-open",
@@ -78,7 +91,7 @@ function GetFolders({
             </span>
           </div>
           <BsThreeDotsVertical
-            onClick={(event) => {
+            onClick={(event: React.MouseEvent<SVGElement>) => {
               event.stopPropagation();
               if (folder.id) {
                 handleMenuToggle(folder.id);
@@ -90,7 +103,18 @@ function GetFolders({
             /* drop down */
             openMenu === folder.id && (
               <FileDropDown
-                file={{ ...folder, folderName: folder.folderName ?? "", isFolder: folder.isFolder ?? true, isStarred: folder.isStarred ?? false, isTrashed: folder.isTrashed ?? false, id: folder.id ?? "", fileLink: folder.fileLink ?? "", fileName: folder.fileName ?? "", fileExtension: folder.fileExtension ?? "", folderId: folder.folderId ?? "" }}
+                file={{
+                  ...folder,
+                  folderName: folder.folderName ?? "",
+                  isFolder: folder.isFolder ?? true,
+                  isStarred: folder.isStarred ?? false,
+                  isTrashed: folder.isTrashed ?? false,
+                  id: folder.id ?? "",
+                  fileLink: folder.fileLink ?? "",
+                  fileName: folder.fileName ?? "",
+                  fileExtension: folder.fileExtension ?? "",
+                  folderId: folder.folderId ?? "",
+                }}
                 setOpenMenu={setOpenMenu}
                 isFolderComp={true}
                 select={select}
