@@ -7,8 +7,8 @@ import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { fetchFiles } from "@/hooks/fetchFiles";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchFiles } from "@/hooks/fetchFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { DotLoader } from "react-spinners";
 
 function Folder() {
@@ -23,12 +23,15 @@ function Folder() {
   const currentFolderId = Folder?.[1] || "";
 
   // Fetch the list of files and folders
-  const list = fetchFiles(
+  const list = useFetchFiles(
     currentFolderId,
-    session?.user.id!,
-    session?.user.email!,
+    session?.user.id ?? "",
+    session?.user.email ?? undefined,
   );
-  const allFiles = fetchAllFiles(session?.user.id!, session?.user.email ?? undefined);
+  const allFiles = useFetchAllFiles(
+    session?.user.id ?? "",
+    session?.user.email ?? undefined,
+  );
   const currentFolder = allFiles.find(
     (item) => item.id === currentFolderId && item.isFolder,
   );

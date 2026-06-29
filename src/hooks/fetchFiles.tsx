@@ -1,95 +1,10 @@
-import { onSnapshot, collection } from "firebase/firestore";
-import { database } from "@/firebaseConfig";
-import { useEffect, useState } from "react";
+import { useFileEntries } from "@/hooks/useFileEntries";
 
-let files = collection(database, "files");
-
-const matchesOwner = (
-  data: Record<string, unknown>,
-  userId: string,
-  userEmail?: string,
-) => {
-  return data.userId === userId || (!!userEmail && data.userEmail === userEmail);
-};
-
-export const fetchFiles = (
+export const useFetchFiles = (
   folderId: string,
   userId: string,
   userEmail?: string,
 ) => {
-  const [fileList, setFileList] = useState<FileListProps[]>([]);
-
-  const getFolders = () => {
-    if (userId) {
-      if (!folderId) {
-        onSnapshot(files, (res) => {
-          return setFileList(
-            res.docs
-              .map((doc) => {
-                const data = doc.data();
-                const fileExtension = doc
-                  .data()
-                  .fileName?.split(".")
-                  .pop()
-                  ?.toLowerCase();
-                return {
-                  ...data,
-                  id: doc.id,
-                  fileName: data.fileName,
-                  fileExtension: fileExtension,
-                  fileLink: data.fileLink,
-                  folderId: data.folderId,
-                  folderName: data.folderName,
-                  isFolder: data.isFolder,
-                  isStarred: data.isStarred,
-                  isTrashed: data.isTrashed,
-                  fileSize: data.fileSize,
-                  isShared: data.isShared,
-                  shareToken: data.shareToken,
-                };
-              })
-              .filter((file) => matchesOwner(file, userId, userEmail))
-              .filter((file) => file.folderId === "") as FileListProps[],
-          );
-        });
-      } else {
-        onSnapshot(files, (res) => {
-          return setFileList(
-            res.docs
-              .map((doc) => {
-                const data = doc.data();
-                const fileExtension = doc
-                  .data()
-                  .fileName?.split(".")
-                  .pop()
-                  ?.toLowerCase();
-                return {
-                  ...data,
-                  id: doc.id,
-                  fileName: data.fileName,
-                  fileExtension: fileExtension,
-                  fileLink: data.fileLink,
-                  folderId: data.folderId,
-                  folderName: data.folderName,
-                  isFolder: data.isFolder,
-                  isStarred: data.isStarred,
-                  isTrashed: data.isTrashed,
-                  fileSize: data.fileSize,
-                  isShared: data.isShared,
-                  shareToken: data.shareToken,
-                };
-              })
-              .filter((file) => matchesOwner(file, userId, userEmail))
-              .filter((file) => file.folderId === folderId) as FileListProps[],
-          );
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    getFolders();
-  }, [folderId, userEmail, userId]);
-
-  return fileList;
+  void userEmail;
+  return useFileEntries(userId).filter((entry) => entry.folderId === folderId);
 };

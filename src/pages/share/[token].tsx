@@ -1,61 +1,20 @@
 import Head from "next/head";
 import Image from "next/image";
-import { database } from "@/firebaseConfig";
+import type { GetServerSideProps } from "next";
+
 import fileIcons from "@/components/fileIcons";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useRouter } from "next/router";
-import React from "react";
+import { db } from "@/server/db";
+import { serializeFileEntry } from "@/server/files";
 
-function SharedFilePage() {
-  const router = useRouter();
-  const { token } = router.query;
-  const [file, setFile] = React.useState<FileListProps | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    if (!router.isReady || typeof token !== "string") return;
-
-    const loadFile = async () => {
-      setIsLoading(true);
-
-      try {
-        const filesRef = collection(database, "files");
-        const snapshot = await getDocs(
-          query(
-            filesRef,
-            where("shareToken", "==", token),
-            where("isShared", "==", true),
-          ),
-        );
-
-        const match = snapshot.docs.find((entry) => {
-          const data = entry.data();
-          return !data.isFolder && !data.isTrashed;
-        });
-
-        if (!match) {
-          setFile(null);
-          return;
-        }
-
-        const data = match.data();
-        setFile({
-          ...data,
-          id: match.id,
-          fileExtension: data.fileName?.split(".").pop()?.toLowerCase() ?? "",
-        } as FileListProps);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void loadFile();
-  }, [router.isReady, token]);
-
+function SharedFilePage({ file }: { file: FileListProps | null }) {
   const renderPreview = () => {
     if (!file) return null;
 
-    if (["jpg", "jpeg", "png", "gif", "webp", "ico", "jfif"].includes(file.fileExtension)) {
+    if (
+      ["jpg", "jpeg", "png", "gif", "webp", "ico", "jfif"].includes(
+        file.fileExtension,
+      )
+    ) {
       return (
         <div className="relative h-[24rem] w-full overflow-hidden rounded-2xl bg-darkC2">
           <Image
@@ -88,12 +47,14 @@ function SharedFilePage() {
     }
 
     const icon =
-      fileIcons[file.fileExtension as keyof typeof fileIcons] ?? fileIcons["any"];
+      fileIcons[file.fileExtension as keyof typeof fileIcons] ?? fileIcons.any;
 
     return (
       <div className="flex min-h-[24rem] flex-col items-center justify-center rounded-2xl bg-darkC2 p-8 text-textC">
         <div className="mb-4 h-28 w-28">{icon}</div>
-        <p className="text-sm text-textC/70">Preview is not available for this file type.</p>
+        <p className="text-sm text-textC/70">
+          Preview is not available for this file type.
+        </p>
       </div>
     );
   };
@@ -105,15 +66,14 @@ function SharedFilePage() {
       </Head>
       <div className="mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center px-5 py-10">
         <div className="w-full rounded-[2rem] bg-white p-6 shadow-sm shadow-[#d7dce5]">
-          {isLoading ? (
-            <div className="flex min-h-[20rem] items-center justify-center text-textC">
-              Loading shared file...
-            </div>
-          ) : !file ? (
+          {!file ? (
             <div className="flex min-h-[20rem] flex-col items-center justify-center text-center text-textC">
-              <h1 className="mb-2 text-2xl font-medium">This file is unavailable</h1>
+              <h1 className="mb-2 text-2xl font-medium">
+                This file is unavailable
+              </h1>
               <p className="text-sm text-textC/70">
-                The share link may be invalid or sharing may have been turned off.
+                The share link may be invalid or sharing may have been turned
+                off.
               </p>
             </div>
           ) : (
@@ -122,7 +82,9 @@ function SharedFilePage() {
                 <p className="text-sm uppercase tracking-[0.2em] text-textC/50">
                   Shared file
                 </p>
-                <h1 className="text-3xl font-medium text-textC">{file.fileName}</h1>
+                <h1 className="text-3xl font-medium text-textC">
+                  {file.fileName}
+                </h1>
               </div>
               {renderPreview()}
               <div className="flex flex-wrap gap-3">
@@ -142,5 +104,26 @@ function SharedFilePage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  file: FileListProps | null;
+}> = async ({ params }) => {
+  const token = typeof params?.token === "string" ? params.token : "";
+  const entry = token
+    ? await db.fileEntry.findFirst({
+        where: {
+          shareToken: token,
+          isShared: true,
+          isFolder: false,
+          isTrashed: false,
+        },
+      })
+    : null;
+
+  const file = entry
+    ? { ...serializeFileEntry(entry), userId: undefined, userEmail: undefined }
+    : null;
+  return { props: { file } };
+};
 
 export default SharedFilePage;

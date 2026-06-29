@@ -11,10 +11,10 @@ import {
   replaceConflictingEntry,
   deleteFile,
   USER_STORAGE_LIMIT_BYTES,
-} from "@/API/Firestore";
+} from "@/API/Files";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { formatBytes } from "@/utils/formatBytes";
 
 function SideMenu() {
@@ -29,7 +29,7 @@ function SideMenu() {
   const { data: session } = useSession();
   const userId = session?.user.id;
   const userEmail = session?.user.email;
-  const allFiles = fetchAllFiles(userId!, userEmail ?? undefined);
+  const allFiles = useFetchAllFiles(userId ?? "", userEmail ?? undefined);
   const currentUsageBytes = allFiles.reduce((total, entry) => {
     if (entry.isFolder) return total;
     return total + Number(entry.fileSize ?? 0);
@@ -37,7 +37,9 @@ function SideMenu() {
 
   const ensureWithinStorageLimit = (bytesToAdd: number) => {
     if (currentUsageBytes + bytesToAdd > USER_STORAGE_LIMIT_BYTES) {
-      window.alert(`You have reached your ${formatBytes(USER_STORAGE_LIMIT_BYTES)} storage limit.`);
+      window.alert(
+        `You have reached your ${formatBytes(USER_STORAGE_LIMIT_BYTES)} storage limit.`,
+      );
       return false;
     }
 
@@ -86,7 +88,10 @@ function SideMenu() {
       }
 
       const uploadId = crypto.randomUUID();
-      setUploads((prev) => [...prev, { id: uploadId, name: file.name, progress: 0 }]);
+      setUploads((prev) => [
+        ...prev,
+        { id: uploadId, name: file.name, progress: 0 },
+      ]);
       await fileUpload(
         file,
         uploadId,
@@ -155,7 +160,9 @@ function SideMenu() {
 
     const currentFolderId = Folder?.[1] || "";
     const folderDocsById = new Map(
-      allFiles.filter((entry) => entry.isFolder).map((entry) => [entry.id, entry]),
+      allFiles
+        .filter((entry) => entry.isFolder)
+        .map((entry) => [entry.id, entry]),
     );
     const folderPathMap = new Map<string, string>();
 
@@ -275,7 +282,10 @@ function SideMenu() {
       }
 
       const uploadId = crypto.randomUUID();
-      setUploads((prev) => [...prev, { id: uploadId, name: uploadName, progress: 0 }]);
+      setUploads((prev) => [
+        ...prev,
+        { id: uploadId, name: uploadName, progress: 0 },
+      ]);
       await fileUpload(
         file,
         uploadId,
@@ -311,10 +321,7 @@ function SideMenu() {
         />
       )}
       {/* Progress Indicator */}
-      <ProgressIndicator
-        uploads={uploads}
-        setUploads={setUploads}
-      />
+      <ProgressIndicator uploads={uploads} setUploads={setUploads} />
       {/* New folder */}
       {folderToggle && (
         <AddFolder
@@ -326,16 +333,17 @@ function SideMenu() {
       {/* navbar */}
       <Navbar />
       <div className="absolute bottom-4 left-0 w-full pr-4">
-        <div className="rounded-2xl bg-white/90 px-2 tablet:px-4 py-3 text-sm text-textC shadow-sm shadow-[#ddd]">
+        <div className="rounded-2xl bg-white/90 px-2 py-3 text-sm text-textC shadow-sm shadow-[#ddd] tablet:px-4">
           <div className="mb-2 flex items-center justify-between font-medium">
             <span className="hidden tablet:block">Storage</span>
             <span>
-              {formatBytes(currentUsageBytes)} / {formatBytes(USER_STORAGE_LIMIT_BYTES)}
+              {formatBytes(currentUsageBytes)} /{" "}
+              {formatBytes(USER_STORAGE_LIMIT_BYTES)}
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-darkC2 hidden tablet:block">
+          <div className="hidden h-2 overflow-hidden rounded-full bg-darkC2 tablet:block">
             <div
-              className={`h-full rounded-full ${ currentUsageBytes >= (USER_STORAGE_LIMIT_BYTES / 1.25 ) ? "bg-red-500" : "bg-[#1a73e8]"}`}
+              className={`h-full rounded-full ${currentUsageBytes >= USER_STORAGE_LIMIT_BYTES / 1.25 ? "bg-red-500" : "bg-[#1a73e8]"}`}
               style={{
                 width: `${Math.min(
                   100,

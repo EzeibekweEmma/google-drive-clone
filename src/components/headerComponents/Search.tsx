@@ -1,4 +1,4 @@
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { useSession } from "next-auth/react";
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillFolder, AiOutlineSearch } from "react-icons/ai";
@@ -11,7 +11,10 @@ function Search() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { data: session } = useSession();
-  let list = fetchAllFiles(session?.user.id!, session?.user.email as string);
+  const list = useFetchAllFiles(
+    session?.user.id ?? "",
+    session?.user.email ?? undefined,
+  );
 
   const router = useRouter();
 

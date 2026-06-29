@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
-import { addFiles } from "@/API/Firestore";
+import { addFiles } from "@/API/Files";
 
 const fileUpload = (
-  file: any,
+  file: File,
   uploadId: string,
   setUploads: Dispatch<SetStateAction<UploadItem[]>>,
   parentId: string,
@@ -69,26 +69,37 @@ const fileUpload = (
             secure_url: string;
           };
 
-          await addFiles(
-            result.secure_url,
-            fileNameOverride ?? file.name,
-            parentId,
-            userId,
-            userEmail,
-            result.public_id,
-            result.resource_type,
-            Number(file.size ?? 0),
-          );
+          try {
+            await addFiles(
+              result.secure_url,
+              fileNameOverride ?? file.name,
+              parentId,
+              userId,
+              userEmail,
+              result.public_id,
+              result.resource_type,
+              Number(file.size ?? 0),
+            );
 
-          setUploads((prev) =>
-            prev.map((upload) =>
-              upload.id === uploadId
-                ? { ...upload, progress: 100, fileLink: result.secure_url }
-                : upload,
-            ),
-          );
-
-          resolve();
+            setUploads((prev) =>
+              prev.map((upload) =>
+                upload.id === uploadId
+                  ? { ...upload, progress: 100, fileLink: result.secure_url }
+                  : upload,
+              ),
+            );
+            resolve();
+          } catch (metadataError) {
+            await fetch("/api/cloudinary/destroy", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                publicId: result.public_id,
+                resourceType: result.resource_type,
+              }),
+            }).catch(console.error);
+            reject(metadataError);
+          }
         };
 
         xhr.onerror = () => reject(new Error("Cloudinary upload failed."));

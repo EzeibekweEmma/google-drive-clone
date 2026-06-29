@@ -1,0 +1,1 @@
+export const USER_STORAGE_LIMIT_BYTES = 200 * 1024 * 1024;
