@@ -1,4 +1,4 @@
-import { renameFile } from "@/API/Firestore";
+import { renameFile } from "@/API/Files";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 

@@ -1,10 +1,10 @@
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useFetchFiles } from "@/hooks/fetchFiles";
 import React, { useState } from "react";
 import { AiFillFolder } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import FileDropDown from "./FileDropDown";
 import Rename from "./Rename";
 
@@ -21,16 +21,11 @@ function GetFolders({
   const { data: session } = useSession();
 
   const router = useRouter();
-  let folderList = fetchFiles(
-    folderId,
-    session?.user.id!,
-    session?.user.email as string,
-  );
-  if (select)
-    folderList = fetchAllFiles(
-      session?.user.id!,
-      session?.user.email as string,
-    );
+  const userId = session?.user.id ?? "";
+  const userEmail = session?.user.email ?? undefined;
+  const folderFiles = useFetchFiles(folderId, userId, userEmail);
+  const allFiles = useFetchAllFiles(userId, userEmail);
+  const folderList = select ? allFiles : folderFiles;
 
   const handleMenuToggle = (fileId: string) => {
     // Toggle the dropdown for the given file
@@ -80,7 +75,9 @@ function GetFolders({
         <div
           key={folder.id}
           onDoubleClick={() => {
-            select !== "trashed" && router.push("/drive/folders/" + folder.id);
+            if (select !== "trashed") {
+              void router.push("/drive/folders/" + folder.id);
+            }
           }}
           className="relative flex w-[13.75rem] cursor-alias items-center justify-between rounded-xl bg-darkC2 p-3 hover:bg-darkC"
         >

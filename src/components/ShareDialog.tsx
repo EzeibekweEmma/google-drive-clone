@@ -1,4 +1,4 @@
-import { updateShareSettings } from "@/API/Firestore";
+import { updateShareSettings } from "@/API/Files";
 import React from "react";
 
 function ShareDialog({
@@ -84,7 +84,9 @@ function ShareDialog({
             >
               <div>
                 <p className="font-medium text-textC">Only you</p>
-                <p className="text-sm text-textC/70">Only your account can open this file.</p>
+                <p className="text-sm text-textC/70">
+                  Only your account can open this file.
+                </p>
               </div>
               <span className="text-sm font-medium text-textC/70">
                 {accessMode === "private" ? "Selected" : ""}
@@ -102,7 +104,9 @@ function ShareDialog({
             >
               <div>
                 <p className="font-medium text-textC">Anyone with the link</p>
-                <p className="text-sm text-textC/70">Anyone who has the link can view this file.</p>
+                <p className="text-sm text-textC/70">
+                  Anyone who has the link can view this file.
+                </p>
               </div>
               <span className="text-sm font-medium text-textC/70">
                 {accessMode === "public" ? "Selected" : ""}
@@ -125,7 +129,8 @@ function ShareDialog({
             </div>
           ) : (
             <div className="rounded-lg bg-darkC2 px-3 py-2 text-sm text-textC/70">
-              Link copying is available after you switch access to "Anyone with the link".
+              Link copying is available after you switch access to "Anyone with
+              the link".
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import FileHeader from "@/components/FileHeader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import { DotLoader } from "react-spinners";
 
 export default function Index() {
@@ -16,7 +16,10 @@ export default function Index() {
   const { data: session } = useSession();
 
   // Fetch the full list so nested starred items are included
-  const list = fetchAllFiles(session?.user.id!, session?.user.email ?? undefined);
+  const list = useFetchAllFiles(
+    session?.user.id ?? "",
+    session?.user.email ?? undefined,
+  );
 
   useEffect(() => {
     // Determine if there are folders and files in the list

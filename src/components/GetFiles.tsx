@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { fetchFiles } from "@/hooks/fetchFiles";
+import { useFetchFiles } from "@/hooks/fetchFiles";
 import Image from "next/image";
 import fileIcons from "@/components/fileIcons";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSession } from "next-auth/react";
 import FileDropDown from "./FileDropDown";
-import { fetchAllFiles } from "@/hooks/fetchAllFiles";
+import { useFetchAllFiles } from "@/hooks/fetchAllFiles";
 import Rename from "./Rename";
 
 function GetFiles({ folderId, select }: { folderId: string; select: string }) {
@@ -14,13 +14,11 @@ function GetFiles({ folderId, select }: { folderId: string; select: string }) {
 
   const { data: session } = useSession();
 
-  let fileList = fetchFiles(
-    folderId,
-    session?.user.id!,
-    session?.user.email as string,
-  );
-  if (select)
-    fileList = fetchAllFiles(session?.user.id!, session?.user.email as string);
+  const userId = session?.user.id ?? "";
+  const userEmail = session?.user.email ?? undefined;
+  const folderFiles = useFetchFiles(folderId, userId, userEmail);
+  const allFiles = useFetchAllFiles(userId, userEmail);
+  const fileList = select ? allFiles : folderFiles;
 
   const openFile = (fileLink: string) => {
     window.open(fileLink, "_blank");

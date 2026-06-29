@@ -11,7 +11,13 @@ import {
 } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { TbDownload } from "react-icons/tb";
-import { deleteFile, moveEntry, copyEntry, starFile, trashFile } from "@/API/Firestore";
+import {
+  deleteFile,
+  moveEntry,
+  copyEntry,
+  starFile,
+  trashFile,
+} from "@/API/Files";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import TransferDialog from "./TransferDialog";
@@ -27,7 +33,9 @@ function FileDropDown({
 }: FileDropDownProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [transferMode, setTransferMode] = React.useState<"move" | "copy" | "">("");
+  const [transferMode, setTransferMode] = React.useState<"move" | "copy" | "">(
+    "",
+  );
   const [shareOpen, setShareOpen] = React.useState(false);
   const closeMenu = () => setOpenMenu("");
 
@@ -71,7 +79,7 @@ function FileDropDown({
               onClick={() => {
                 closeMenu();
                 isFolderComp
-                  ? router.push("/drive/folders/" + folderId)
+                  ? void router.push("/drive/folders/" + folderId)
                   : openFile(file.fileLink);
               }}
               className="my-2 flex items-center space-x-3 px-3 py-1.5 hover:cursor-pointer hover:bg-[#ddd]"
@@ -202,7 +210,12 @@ function FileDropDown({
               return;
             }
 
-            await copyEntry(file, destinationId, session.user.id, session.user.email ?? undefined);
+            await copyEntry(
+              file,
+              destinationId,
+              session.user.id,
+              session.user.email ?? undefined,
+            );
           }}
         />
       )}
