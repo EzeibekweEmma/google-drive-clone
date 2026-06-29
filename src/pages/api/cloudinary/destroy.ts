@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { getServerAuthSession } from "@/server/auth";
 import { destroyCloudinaryAsset } from "@/server/cloudinary";
+import { db } from "@/server/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,6 +23,11 @@ export default async function handler(
     return res
       .status(403)
       .json({ error: "This asset does not belong to the current user." });
+  }
+
+  const referenceCount = await db.fileEntry.count({ where: { publicId } });
+  if (referenceCount > 0) {
+    return res.status(200).json({ result: "retained" });
   }
 
   await destroyCloudinaryAsset(publicId, resourceType);
